@@ -1,15 +1,17 @@
 import { app, BrowserWindow } from "electron";
 import * as path from "path";
-import installExtension, {
-  REACT_DEVELOPER_TOOLS,
-} from "electron-devtools-installer";
+import installExtension, { REACT_DEVELOPER_TOOLS } from "electron-devtools-installer";
+import axios from "axios";
+import { ipcMain } from "electron";
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1280,
+    height: 720,
     webPreferences: {
       // contextIsolation: false,
+      nodeIntegration: true,
+      contextIsolation: false,
       preload: path.join(__dirname, "preload.js"),
     },
   });
@@ -30,13 +32,18 @@ function createWindow() {
         "..",
         "node_modules",
         ".bin",
-        "electron" + (process.platform === "win32" ? ".cmd" : "")
+        "electron" + (process.platform === "win32" ? ".cmd" : ""),
       ),
       forceHardReset: true,
       hardResetMethod: "exit",
     });
   }
 }
+
+ipcMain.handle("request", async (_, axios_request) => {
+  const result = await axios(axios_request);
+  return { data: result.data, status: result.status };
+});
 
 app.whenReady().then(() => {
   // DevTools

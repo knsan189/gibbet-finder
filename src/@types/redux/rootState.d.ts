@@ -1,5 +1,5 @@
-import { ConfigState } from "./config.interface";
+import { UserState } from "./user.interface";
 
 export interface RootStateInterface {
-  party: ConfigState;
+  user: UserState;
 }
