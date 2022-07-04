@@ -19,8 +19,6 @@ const width = 800;
 const Result = () => {
   const { user } = useSelector((state: RootState) => state.user);
 
-  console.log(user);
-
   const handleClick = () => {
     window.require("electron").shell.openExternal(GIBBIT_LIST_URL);
   };

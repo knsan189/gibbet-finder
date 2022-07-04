@@ -1,3 +1,4 @@
+import { Gibbet } from "./../@types/redux/gitbbet.interface";
 import { AxiosRequestConfig } from "axios";
 import * as cheerio from "cheerio";
 
@@ -76,6 +77,67 @@ class UserService {
             loadTime,
             allCharList,
           });
+        } catch (err) {
+          reject(err);
+          console.log(err);
+        }
+      })();
+    });
+  }
+
+  public static async getGibbets() {
+    return new Promise((resolve, reject) => {
+      (async () => {
+        try {
+          const { ipcRenderer } = window.require("electron");
+          const request: AxiosRequestConfig = {
+            url: `https://arca.live/b/lostark/53703658`,
+            method: "get",
+          };
+          const response = await ipcRenderer.invoke("request", request);
+          const parseHtml = response.data.replace("<!DOCTYPE html>", "").replace(/\r?\n|\r/g, "");
+          const $ = cheerio.load(parseHtml);
+          const contents = $(".article-content").text();
+          const arr = contents.split("`");
+          const gibbets: Gibbet[] = [];
+          const serverName = "서버 : ";
+          const charName = "캐릭터명 : ";
+          const islandName = "영지명 : ";
+          const reason = "사유 : ";
+
+          arr.forEach((item) => {
+            const textList = item.split("-");
+            const gibbet: Gibbet = {
+              serverName: "",
+              islandName: "",
+              reason: "",
+              charList: [],
+            };
+            textList.forEach((i) => {
+              if (i.length) {
+                const parsed = i.trim();
+                if (parsed.indexOf(serverName) === 0) {
+                  const value = parsed.replace(serverName, "").trim();
+                  gibbet.serverName = value;
+                }
+                if (parsed.indexOf(islandName) === 0) {
+                  const value = parsed.replace(islandName, "").trim();
+                  gibbet.islandName = value;
+                }
+                if (parsed.indexOf(reason) === 0) {
+                  const value = parsed.replace(reason, "").trim();
+                  gibbet.reason = value;
+                }
+                if (parsed.indexOf(charName) === 0) {
+                  const value = parsed.replace(charName, "");
+                  const tempArr = value.split(",");
+                  tempArr.forEach((v) => gibbet.charList.push(v.trim()));
+                }
+              }
+            });
+            gibbets.push(gibbet);
+          });
+          resolve(gibbets);
         } catch (err) {
           reject(err);
           console.log(err);
