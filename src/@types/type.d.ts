@@ -1,4 +1,4 @@
-import { CardSet, Jewel, LoaCard, Server } from "../service/UserService";
+import { CardSet, Equipments, Jewel, LoaCard, Server } from "../service/UserService";
 
 export interface User {
   itemLevel: number;
@@ -20,4 +20,5 @@ export interface User {
     name: string;
     level: string;
   };
+  equipments: Equipments;
 }

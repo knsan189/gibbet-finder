@@ -6,6 +6,21 @@ import * as cheerio from "cheerio";
 //game-info__guild
 //profile-character-list__server
 //profile-character-list__char
+//profile-equipment__slot
+
+export interface Equipment {
+  grade: number;
+  img: string;
+  key: string;
+  name?: string;
+  quality?: number;
+  trypod?: string[];
+  abilityList?: string[];
+}
+
+export interface Equipments {
+  [slot: string]: Equipment;
+}
 
 export interface CardSet {
   title: string;
@@ -127,8 +142,6 @@ class UserService {
           });
 
           const script = $("script");
-          const equipments = [];
-
           const jewels: Jewel[] = [];
           const jewelList = $(".jewel__wrap > span");
           const jewelEffect = $(".jewel-effect__list li");
@@ -177,19 +190,67 @@ class UserService {
             });
           });
 
+          const equipments: Equipments = {};
+          const equipmentList = $(".profile-equipment__slot > div");
+
+          equipmentList.each((index) => {
+            const item = equipmentList.eq(index);
+            const slot = item.attr("class") as string;
+            const grade = parseInt(item.attr("data-grade") as string, 10);
+            const img = item.find("img").attr("src") as string;
+            const key = item.attr("data-item") as string;
+            equipments[slot] = {
+              grade,
+              img,
+              key,
+            };
+          });
+
           let text = script.eq(2).text();
           if (text.includes("$.Profile =")) {
             text = text.replace("$.Profile =", "");
             const data = JSON.parse(text.substring(0, text.length - 1));
-            // const equipment = data.Equip;
-            // Object.keys(equipment).forEach((key) => {
-            //   if (!key.includes("Gem")) {
-            //     const itemNum = parseInt(key.slice(-2), 10);
-            //     if (itemNum <= 5) {
-            //       equipments.push(equipment[key].Element_000.value.replace(/<[^>]*>?/g, ""));
-            //     }
-            //   }
-            // });
+            const Equip = data.Equip;
+            const Engrave = data.Engrave;
+            Object.keys(equipments).forEach((key, index) => {
+              const item = equipments[key];
+              if (Equip[item.key]) {
+                const temp = Equip[item.key];
+                equipments[key].name = temp.Element_000.value.replace(/<[^>]*>?/g, "");
+                equipments[key].quality = temp.Element_001.value.qualityValue;
+                const trypod = temp.Element_008?.value?.Element_000;
+                if (trypod?.contentStr) {
+                  equipments[key].trypod = [];
+                  Object.keys(trypod.contentStr).forEach((k) => {
+                    if (trypod.contentStr[k].contentStr) {
+                      equipments[key].trypod?.push(
+                        trypod.contentStr[k].contentStr.replace(/<[^>]*>?/g, ""),
+                      );
+                    }
+                  });
+                }
+                // 어빌리티 스톤
+                if (index === 12) {
+                  const stone = temp.Element_005?.value;
+                  if (stone) {
+                    const ability: string = stone.Element_001.replace(/<[^>]*>?/g, "");
+                    const abilityList: string[] = [];
+                    ability.split("[").forEach((item) => {
+                      if (item.length) {
+                        abilityList.push(item.replace("]", ""));
+                      }
+                    });
+                    equipments[key].abilityList = abilityList;
+                  }
+                }
+              } else if (Engrave[item.key]) {
+                const temp = Engrave[item.key];
+                equipments[key].name = temp.Element_000.value;
+                equipments[key].quality = temp.Element_001.value.leftText
+                  .replace(/<[^>]*>?/g, "")
+                  .replace(/[^0-9]/g, "");
+              }
+            });
           }
 
           resolve({
@@ -206,6 +267,7 @@ class UserService {
             cards,
             jewels,
             wisdom,
+            equipments,
           });
         } catch (err) {
           reject(err);

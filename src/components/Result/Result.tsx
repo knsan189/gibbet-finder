@@ -13,6 +13,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/reducers";
 import ResultCharCards from "./ResultCharCards";
+import ResultCharEquip from "./ResultCharEquip";
 import ResultCharInfo from "./ResultCharInfo";
 import ResultCharJewels from "./ResultCharJewels";
 import ResultCharList from "./ResultCharList";
@@ -45,6 +46,7 @@ const Result = () => {
     >
       <ResultGibbet user={user} />
       <ResultCharInfo user={user} />
+      <ResultCharEquip user={user} />
       <ResultCharJewels jewels={user?.jewels} />
       <ResultCharCards cards={user?.cards} />
       <ResultCharList list={user?.allCharList} />

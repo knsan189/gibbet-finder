@@ -1,4 +1,4 @@
-import { Box, CardHeader, Divider, Paper, styled, Typography } from "@mui/material";
+import { Box, CardHeader, Chip, Divider, Paper, styled, Typography } from "@mui/material";
 import React from "react";
 import { User } from "../../@types/type";
 import { LoaCard } from "../../service/UserService";
@@ -84,9 +84,7 @@ const ResultCharCards = ({ cards }: Props) => {
       </Box>
 
       <Box px={2} pb={2}>
-        <Typography gutterBottom variant="subtitle2">
-          장착 효과
-        </Typography>
+        <Chip label="장착 효과" sx={{ mb: 1 }} />
         {cards?.cardSet.map((set, index) => (
           <Box key={index}>
             <Typography variant="body2">

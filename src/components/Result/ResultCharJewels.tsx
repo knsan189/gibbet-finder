@@ -3,7 +3,6 @@ import React from "react";
 import { Jewel } from "../../service/UserService";
 
 const JewelBox = styled(Box)<{ grade: number }>(({ theme }) => ({
-  background: "linear-gradient(135deg,#3c2201,#a86200)",
   borderRadius: theme.spacing(1),
   width: 60,
   height: 60,

@@ -48,7 +48,7 @@ const Search = () => {
         <Avatar src="/images/mococo.jpg" sx={{ width: 120, height: 120, mb: 2 }} />
         <Typography variant="h6">로스트아크 채널 효수검색기</Typography>
         <Typography variant="body2" gutterBottom color="text.secondary">
-          로아챈에 저격이 없는 그날까지
+          로아챈 무사고 365일 기원
         </Typography>
       </Box>
       <SearchBar />
