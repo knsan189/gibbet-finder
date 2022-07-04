@@ -4,6 +4,7 @@ import React from "react";
 
 interface Props {
   value: string;
+  placeholder?: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -14,13 +15,13 @@ const InputBox = styled(Box)(({ theme }) => ({
   maxWidth: 400,
 }));
 
-const SearchInput = ({ value, onChange }: Props) => {
+const SearchInput = ({ value, onChange, placeholder }: Props) => {
   return (
     <InputBox display="flex" alignItems="center">
       <Box px={1} py={0.5}>
         <Search color="disabled" />
       </Box>
-      <InputBase value={value} onChange={onChange} fullWidth />
+      <InputBase value={value} onChange={onChange} fullWidth placeholder={placeholder} />
     </InputBox>
   );
 };

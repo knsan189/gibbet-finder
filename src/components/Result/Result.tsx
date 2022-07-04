@@ -12,16 +12,15 @@ import {
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/reducers";
-import { GIBBIT_LIST_URL } from "../../utils/const";
+import ResultCharCards from "./ResultCharCards";
+import ResultCharInfo from "./ResultCharInfo";
+import ResultCharJewels from "./ResultCharJewels";
 import ResultCharList from "./ResultCharList";
+import ResultGibbet from "./ResultGibbet";
 
 const width = 800;
 const Result = () => {
   const { user } = useSelector((state: RootState) => state.user);
-
-  const handleClick = () => {
-    window.require("electron").shell.openExternal(GIBBIT_LIST_URL);
-  };
 
   return (
     <Drawer
@@ -44,34 +43,11 @@ const Result = () => {
         },
       }}
     >
-      <Paper>
-        <CardHeader title="효수 검색 결과" titleTypographyProps={{ variant: "h6" }} />
-        <Divider />
-        <Box p={2}>
-          <Typography color="error">빼박 효수 O</Typography>
-          <Typography variant="body2">
-            오레하 환승 (계삭튀) https://arca.live/b/lostark/34715578
-            https://arca.live/b/lostark/34669908
-          </Typography>
-        </Box>
-      </Paper>
-      <Paper>
-        <CardHeader title="캐릭터 정보" titleTypographyProps={{ variant: "h6" }} />
-        <Divider />
-        <CardContent>
-          <Typography variant="body2">
-            @{user?.serverName} / {user?.guildName}
-          </Typography>
-          <Typography variant="body2">{user?.charName}</Typography>
-          <Typography variant="caption">
-            {user?.charClass} {user?.charLevel}
-          </Typography>
-        </CardContent>
-      </Paper>
+      <ResultGibbet user={user} />
+      <ResultCharInfo user={user} />
+      <ResultCharJewels jewels={user?.jewels} />
+      <ResultCharCards cards={user?.cards} />
       <ResultCharList list={user?.allCharList} />
-      <Box>
-        <Button onClick={handleClick}>챈에서 효수 목록 확인하기</Button>
-      </Box>
     </Drawer>
   );
 };

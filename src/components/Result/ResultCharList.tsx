@@ -21,12 +21,11 @@ const ResultCharList = ({ list }: Props) => {
   return (
     <Paper>
       <CardHeader title="원정대 목록" titleTypographyProps={{ variant: "h6" }} />
-      <Divider />
-      <Box p={2} display="flex" flexWrap="wrap">
+      <Box px={2} pb={2} display="flex" flexWrap="wrap">
         {list.map((server, index) => {
           return (
             <Box key={server.serverName} mb={list.length - 1 !== index ? 1 : 0}>
-              <Chip label={server.serverName} />
+              <Chip label={server.serverName.replace("@", "")} />
               <Box display="flex" flexWrap="wrap" pt={1}>
                 {server.charList.map((char) => (
                   <Paper key={char.charName} sx={{ mr: 1, mb: 1 }}>

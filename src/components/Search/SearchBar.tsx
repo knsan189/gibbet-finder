@@ -19,8 +19,8 @@ const SearchBar = () => {
   };
 
   return (
-    <Box display="flex" p={4} justifyContent="center">
-      <SearchInput value={value} onChange={onChange} />
+    <Box display="flex" p={3} justifyContent="center">
+      <SearchInput value={value} onChange={onChange} placeholder={"캐릭터명 검색"} />
       <Button variant="contained" disableElevation onClick={onSubmit}>
         검색
       </Button>

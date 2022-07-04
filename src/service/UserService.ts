@@ -7,7 +7,31 @@ import * as cheerio from "cheerio";
 //profile-character-list__server
 //profile-character-list__char
 
-interface Char {
+export interface CardSet {
+  title: string;
+  effect: string;
+}
+
+export interface LoaCard {
+  name: string;
+  img: string;
+  grade: number;
+  awaken: number;
+}
+
+export interface Jewel {
+  info: string;
+  img: string;
+  level: string;
+  grade: string;
+  skill: {
+    img: string;
+    name: string;
+    effect: string;
+  };
+}
+
+export interface Char {
   thumbnail?: string;
   charName?: string;
   charLevel?: string;
@@ -67,6 +91,107 @@ class UserService {
             allCharList.push(temp);
           });
 
+          const engrave = $(".profile-ability-engrave");
+          const engraves: string[] = [];
+
+          engrave.find("span").each((index, item: any) => {
+            const text = item.children[0].data;
+            if (text) {
+              engraves.push(text);
+            }
+          });
+
+          const wisdomList = $(".game-info__wisdom span");
+          const wisdom = {
+            level: "-",
+            name: "-",
+          };
+          wisdomList.each((index) => {
+            const item = wisdomList.eq(index).text();
+            if (index === 1) {
+              wisdom.level = item;
+            }
+            if (index === 2) {
+              wisdom.name = item;
+            }
+          });
+
+          const ability = $(".profile-ability-battle");
+          const abilities: string[] = [];
+
+          ability.find("span").each((index, item: any) => {
+            const text = item.children[0].data;
+            if (text) {
+              abilities.push(text);
+            }
+          });
+
+          const script = $("script");
+          const equipments = [];
+
+          const jewels: Jewel[] = [];
+          const jewelList = $(".jewel__wrap > span");
+          const jewelEffect = $(".jewel-effect__list li");
+
+          jewelList.each((index) => {
+            const item = jewelList.eq(index);
+            const skill = jewelEffect.eq(index);
+            jewels.push({
+              info: item.find(".info").text(),
+              img: item.find("img").attr("src") as string,
+              level: item.find(".jewel_level").text(),
+              grade: item.attr("data-grade") as string,
+              skill: {
+                img: skill.find("img").attr("src") as string,
+                name: skill.find(".skill_tit").text(),
+                effect: skill.find(".skill_detail").text(),
+              },
+            });
+          });
+
+          const cards: {
+            cardList: LoaCard[];
+            cardSet: CardSet[];
+          } = {
+            cardList: [],
+            cardSet: [],
+          };
+
+          const cardList = $("#cardList li");
+          cardList.each((index) => {
+            const item = cardList.eq(index);
+            cards.cardList.push({
+              img: item.find("img").attr("src") as string,
+              name: item.find("strong").text(),
+              grade: parseInt(item.find("div").attr("data-grade") as string, 10),
+              awaken: parseInt(item.find("div").attr("data-awake") as string, 10),
+            });
+          });
+
+          const cardSetList = $("#cardSetList > li");
+          cardSetList.each((index) => {
+            const item = cardSetList.eq(index);
+            cards.cardSet.push({
+              title: item.find(".card-effect__title").text(),
+              effect: item.find(".card-effect__dsc").text(),
+            });
+          });
+
+          let text = script.eq(2).text();
+          if (text.includes("$.Profile =")) {
+            text = text.replace("$.Profile =", "");
+            const data = JSON.parse(text.substring(0, text.length - 1));
+            // const equipment = data.Equip;
+            // Object.keys(equipment).forEach((key) => {
+            //   if (!key.includes("Gem")) {
+            //     const itemNum = parseInt(key.slice(-2), 10);
+            //     if (itemNum <= 5) {
+            //       equipments.push(equipment[key].Element_000.value.replace(/<[^>]*>?/g, ""));
+            //     }
+            //   }
+            // });
+          }
+
           resolve({
             charClass,
             itemLevel: parseFloat(itemLevel),
@@ -76,6 +201,11 @@ class UserService {
             guildName,
             loadTime,
             allCharList,
+            engraves,
+            abilities,
+            cards,
+            jewels,
+            wisdom,
           });
         } catch (err) {
           reject(err);
