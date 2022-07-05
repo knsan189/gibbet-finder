@@ -1,7 +1,7 @@
 {
   "name": "gibbet-finder",
-  "author": "Your Name",
-  "description": "React-TypeScript-Electron sample with Create React App and Electron Builder",
+  "author": "knsan189",
+  "description": "arca.live LostArk Channel Gibbet finder",
   "homepage": ".",
   "main": "build/electron/main.js",
   "version": "0.1.0",

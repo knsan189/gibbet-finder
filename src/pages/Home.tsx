@@ -1,5 +1,5 @@
 import { Box, LinearProgress, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Result from "../components/Result/Result";
 import Search from "../components/Search/Search";
