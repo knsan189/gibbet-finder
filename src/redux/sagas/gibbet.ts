@@ -1,5 +1,5 @@
 import { all, call, fork, put, takeLatest } from "@redux-saga/core/effects";
-import { GetGibbetList, Gibbet, GibbetActionTypes } from "../../@types/redux/gitbbet.interface";
+import { Gibbet, GibbetActionTypes } from "../../@types/redux/gitbbet.interface";
 import UserService from "../../service/UserService";
 import { setGibbetList } from "../reducers/gibbet";
 

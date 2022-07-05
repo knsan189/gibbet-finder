@@ -1,11 +1,11 @@
-import { CardHeader, CircularProgress, Divider, Paper, Typography } from "@mui/material";
+import { Button, CardHeader, CircularProgress, Paper, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { off } from "process";
 import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Gibbet } from "../../@types/redux/gitbbet.interface";
 import { User } from "../../@types/type";
 import { RootState } from "../../redux/reducers";
+import { GIBBIT_LIST_URL } from "../../utils/const";
 
 interface Props {
   user?: User;
@@ -15,6 +15,10 @@ const ResultGibbet = ({ user }: Props) => {
   const { gibbets } = useSelector((state: RootState) => state.gibbets);
   const [result, setResult] = useState<Gibbet>();
   const [loading, setLoading] = useState(false);
+
+  const handleClick = () => {
+    window.require("electron").shell.openExternal(GIBBIT_LIST_URL);
+  };
 
   const findGibbet = useCallback(async () => {
     if (!user) return;
@@ -58,18 +62,22 @@ const ResultGibbet = ({ user }: Props) => {
     <Paper>
       <CardHeader
         title="효수 검색 결과"
-        titleTypographyProps={{ variant: "h6" }}
-        subheader={result ? "😈 효수 100% 😈" : "😊 안전한 챈럼입니다."}
+        titleTypographyProps={{ variant: "h6", gutterBottom: true }}
+        subheader={result ? "😈 효수 😈" : "😊 안전한 챈럼입니다."}
         subheaderTypographyProps={{ color: result ? "error" : "" }}
       />
       {result && (
         <>
-          <Divider />
-          <Box p={2}>
+          <Box px={2} pb={2}>
             <Typography variant="body2">{result?.reason}</Typography>
           </Box>
         </>
       )}
+      <Box display="flex" justifyContent="end" pb={2} pr={2}>
+        <Button variant="contained" onClick={handleClick} size="small">
+          챈에서 효수 목록 확인
+        </Button>
+      </Box>
     </Paper>
   );
 };

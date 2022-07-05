@@ -70,6 +70,25 @@ const getColor = (quality: number) => {
   return yellow;
 };
 
+const getText = (grade: number) => {
+  switch (grade) {
+    case 1:
+      return "일반";
+    case 2:
+      return "고급";
+    case 3:
+      return "희귀";
+    case 4:
+      return "영웅";
+    case 5:
+      return "유물";
+    case 6:
+      return "고대";
+    default:
+      return "일반";
+  }
+};
+
 const ResultCharEquip = ({ user }: Props) => {
   if (!user) {
     return null;
@@ -114,8 +133,18 @@ const ResultCharEquip = ({ user }: Props) => {
                     </Box>
                   )}
                 </ImgBox>
-                <Box ml={1}>
+                <Box ml={1} display="flex" flexDirection="column">
                   <Typography variant="subtitle2">{equip.name}</Typography>
+                  {equip.abilityList?.map((ab, index) => (
+                    <Typography key={ab} variant="caption" color={index === 2 ? "error" : ""}>
+                      {ab}
+                    </Typography>
+                  ))}
+                  {equip.quality && equip.quality >= 0 && (
+                    <Typography variant="caption">
+                      {getText(equip.grade)} / 품질 {equip.quality}
+                    </Typography>
+                  )}
                 </Box>
               </Box>
             );

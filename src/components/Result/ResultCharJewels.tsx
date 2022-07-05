@@ -1,6 +1,7 @@
-import { Box, CardHeader, Divider, Paper, styled, Typography } from "@mui/material";
-import React from "react";
+import { Box, CardHeader, Paper, styled, Typography } from "@mui/material";
+import React, { MouseEvent, useState } from "react";
 import { Jewel } from "../../service/UserService";
+import ResultCharJewelDetail from "./ResultCharJewelDetail";
 
 const JewelBox = styled(Box)<{ grade: number }>(({ theme }) => ({
   borderRadius: theme.spacing(1),
@@ -35,6 +36,18 @@ const getBackground = (grade: number): string => {
 };
 
 const ResultCharJewels = ({ jewels }: Props) => {
+  const [popover, setPopover] = useState<HTMLElement | null>(null);
+  const [jewel, setJewel] = useState<Jewel>();
+
+  const handleOpen = (event: MouseEvent<HTMLElement>, jewel: Jewel) => {
+    setPopover(event.currentTarget);
+    setJewel(jewel);
+  };
+
+  const onClose = () => {
+    setPopover(null);
+  };
+
   return (
     <Paper>
       <CardHeader title="장착 보석" titleTypographyProps={{ variant: "h6" }} />
@@ -44,6 +57,8 @@ const ResultCharJewels = ({ jewels }: Props) => {
             <JewelBox
               grade={parseInt(jewel.grade, 10)}
               sx={{ background: getBackground(parseInt(jewel.grade, 10)) }}
+              onMouseEnter={(event) => handleOpen(event, jewel)}
+              onMouseLeave={onClose}
             >
               <img src={jewel.img} alt={jewel.info} style={{ width: "80%" }} />
             </JewelBox>
@@ -51,6 +66,7 @@ const ResultCharJewels = ({ jewels }: Props) => {
           </Box>
         ))}
       </Box>
+      <ResultCharJewelDetail jewel={jewel} popover={popover} onClose={onClose} />
     </Paper>
   );
 };

@@ -8,6 +8,7 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1280,
     height: 720,
+    resizable: false,
     webPreferences: {
       // contextIsolation: false,
       nodeIntegration: true,
@@ -19,6 +20,7 @@ function createWindow() {
   if (app.isPackaged) {
     // 'build/index.html'
     win.loadURL(`file://${__dirname}/../index.html`);
+    win.removeMenu();
   } else {
     win.loadURL("http://localhost:3000/index.html");
 

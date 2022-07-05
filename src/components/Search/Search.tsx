@@ -1,9 +1,9 @@
 import React from "react";
-import { Avatar, Box, Button, Divider, styled, ThemeProvider, Typography } from "@mui/material";
+import { Avatar, Box, styled, Typography } from "@mui/material";
 import SearchBar from "./SearchBar";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../redux/reducers";
-import { GIBBIT_LIST_URL } from "../../utils/const";
+import { LOGO_URL } from "../../utils/const";
 
 const Container = styled(Box, { shouldForwardProp: (prop) => prop !== "user" })<{
   user: boolean;
@@ -27,34 +27,19 @@ const Container = styled(Box, { shouldForwardProp: (prop) => prop !== "user" })<
   }),
 }));
 
-const StyledButton = styled(Button)(({ theme }) => ({
-  position: "absolute",
-  borderRadius: theme.spacing(2),
-  bottom: 20,
-  left: "50%",
-  transform: "translateX(-50%)",
-}));
-
 const Search = () => {
   const { user } = useSelector((state: RootState) => state.user);
-
-  const handleClick = () => {
-    window.require("electron").shell.openExternal(GIBBIT_LIST_URL);
-  };
 
   return (
     <Container user={Boolean(user)}>
       <Box p={4} display="flex" flexDirection="column" alignItems="center">
-        <Avatar src="/images/mococo.jpg" sx={{ width: 120, height: 120, mb: 2 }} />
+        <Avatar src={LOGO_URL} sx={{ width: 120, height: 120, mb: 2 }} />
         <Typography variant="h6">로스트아크 채널 효수검색기</Typography>
         <Typography variant="body2" gutterBottom color="text.secondary">
           로아챈 무사고 365일 기원
         </Typography>
       </Box>
       <SearchBar />
-      <StyledButton onClick={handleClick} variant="contained">
-        챈에서 효수 목록 확인
-      </StyledButton>
     </Container>
   );
 };

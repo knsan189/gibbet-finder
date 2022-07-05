@@ -214,6 +214,8 @@ class UserService {
             const Engrave = data.Engrave;
             Object.keys(equipments).forEach((key, index) => {
               const item = equipments[key];
+              if (!item.key) return;
+
               if (Equip[item.key]) {
                 const temp = Equip[item.key];
                 equipments[key].name = temp.Element_000.value.replace(/<[^>]*>?/g, "");
@@ -221,7 +223,7 @@ class UserService {
                 const trypod = temp.Element_008?.value?.Element_000;
                 if (trypod?.contentStr) {
                   equipments[key].trypod = [];
-                  Object.keys(trypod.contentStr).forEach((k) => {
+                  Object.keys(trypod?.contentStr).forEach((k) => {
                     if (trypod.contentStr[k].contentStr) {
                       equipments[key].trypod?.push(
                         trypod.contentStr[k].contentStr.replace(/<[^>]*>?/g, ""),
