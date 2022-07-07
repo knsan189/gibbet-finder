@@ -2,6 +2,7 @@ import { Box, CardHeader, Chip, Paper, styled, Typography } from "@mui/material"
 import React from "react";
 import { User } from "../../@types/type";
 import { CARD_AWAKEN, CARD_IMG } from "../../utils/const";
+import ResultCard from "./ResultCard";
 
 const CardBox = styled(Box)<{ offset: number }>(({ theme, offset }) => ({
   borderRadius: theme.spacing(0.5),
@@ -58,7 +59,7 @@ const getBackground = (grade: number): number => {
     case 4:
       return -367;
     case 5:
-      return -613;
+      return -609.5;
     default:
       return 0;
   }
@@ -66,9 +67,8 @@ const getBackground = (grade: number): number => {
 
 const ResultCharCards = ({ cards }: Props) => {
   return (
-    <Paper>
-      <CardHeader title="장착 카드" titleTypographyProps={{ variant: "h6" }} />
-      <Box px={2} pb={2} display="flex" justifyContent="space-between" alignItems="center">
+    <ResultCard title="장착 카드">
+      <Box display="flex" justifyContent="space-between" alignItems="center">
         {cards?.cardList.map((card, index) => (
           <Box key={index} width="16%" textAlign="center">
             <CardBox offset={getBackground(card.grade)}>
@@ -81,8 +81,7 @@ const ResultCharCards = ({ cards }: Props) => {
           </Box>
         ))}
       </Box>
-
-      <Box px={2} pb={2}>
+      <Box pb={2}>
         <Chip label="장착 효과" sx={{ mb: 1 }} />
         {cards?.cardSet.map((set, index) => (
           <Box key={index}>
@@ -92,7 +91,7 @@ const ResultCharCards = ({ cards }: Props) => {
           </Box>
         ))}
       </Box>
-    </Paper>
+    </ResultCard>
   );
 };
 

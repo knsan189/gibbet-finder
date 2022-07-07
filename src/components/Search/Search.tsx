@@ -36,7 +36,7 @@ const Search = () => {
     <Container user={Boolean(user)}>
       <Box p={4} display="flex" flexDirection="column" alignItems="center">
         <Avatar src={LOGO_URL} sx={{ width: 120, height: 120, mb: 2 }} />
-        <Typography variant="h6" color="text.primary">
+        <Typography variant="h6" color="text.primary" gutterBottom>
           로스트아크 채널 효수검색기
         </Typography>
         <Typography variant="body2" gutterBottom color="text.secondary">

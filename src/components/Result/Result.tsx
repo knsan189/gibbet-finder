@@ -1,7 +1,8 @@
-import { Box, CircularProgress, Drawer, styled, Typography } from "@mui/material";
+import { Box, CircularProgress, Drawer, Grid, styled, Typography } from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/reducers";
+import ResultCharAbility from "./ResultCharAbility";
 import ResultCharCards from "./ResultCharCards";
 import ResultCharEquip from "./ResultCharEquip";
 import ResultCharInfo from "./ResultCharInfo";
@@ -18,12 +19,9 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
     width,
     boxSizing: "border-box",
     borderTop: `1px solid ${theme.palette.divider}`,
-    background: theme.palette.mode === "light" ? "#eee" : theme.palette.grey[800],
+    background: theme.palette.mode === "light" ? "#eee" : theme.palette.grey[900],
     overflowY: "scroll",
     padding: theme.spacing(2),
-    "& > *": {
-      marginBottom: theme.spacing(2),
-    },
   },
 }));
 
@@ -42,14 +40,29 @@ const Result = () => {
           </Box>
         </Box>
       ) : (
-        <>
-          <ResultGibbet user={user} />
-          <ResultCharInfo user={user} />
-          <ResultCharEquip user={user} />
-          <ResultCharJewels jewels={user?.jewels} />
-          <ResultCharCards cards={user?.cards} />
-          <ResultCharList list={user?.allCharList} />
-        </>
+        <Grid container spacing={2}>
+          <Grid item md={12}>
+            <ResultGibbet user={user} />
+          </Grid>
+          <Grid item md={8}>
+            <ResultCharInfo user={user} />
+          </Grid>
+          <Grid item md={4}>
+            <ResultCharAbility user={user} />
+          </Grid>
+          <Grid item>
+            <ResultCharEquip user={user} />
+          </Grid>
+          <Grid item md={12}>
+            <ResultCharJewels jewels={user?.jewels} />
+          </Grid>
+          <Grid item>
+            <ResultCharCards cards={user?.cards} />
+          </Grid>
+          <Grid item>
+            <ResultCharList list={user?.allCharList} />
+          </Grid>
+        </Grid>
       )}
     </StyledDrawer>
   );

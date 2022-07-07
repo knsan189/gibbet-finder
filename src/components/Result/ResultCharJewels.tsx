@@ -1,15 +1,17 @@
-import { Box, CardHeader, Paper, styled, Typography } from "@mui/material";
+import { Box, styled, Typography } from "@mui/material";
 import React, { MouseEvent, useState } from "react";
 import { Jewel } from "../../service/UserService";
+import ResultCard from "./ResultCard";
 import ResultCharJewelDetail from "./ResultCharJewelDetail";
 
 const JewelBox = styled(Box)<{ grade: number }>(({ theme }) => ({
-  borderRadius: theme.spacing(1),
-  width: 60,
-  height: 60,
+  borderRadius: theme.spacing(0.5),
+  width: 50,
+  height: 50,
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
+  marginRight: 4,
 }));
 
 interface Props {
@@ -49,9 +51,8 @@ const ResultCharJewels = ({ jewels }: Props) => {
   };
 
   return (
-    <Paper>
-      <CardHeader title="장착 보석" titleTypographyProps={{ variant: "h6" }} />
-      <Box px={2} pb={2} display="flex" justifyContent="space-between" alignItems="center">
+    <ResultCard title="장착 보석">
+      <Box display="flex" justifyContent="start" alignItems="center">
         {jewels?.map((jewel, index) => (
           <Box textAlign="center" key={index}>
             <JewelBox
@@ -67,7 +68,7 @@ const ResultCharJewels = ({ jewels }: Props) => {
         ))}
       </Box>
       <ResultCharJewelDetail jewel={jewel} popover={popover} onClose={onClose} />
-    </Paper>
+    </ResultCard>
   );
 };
 

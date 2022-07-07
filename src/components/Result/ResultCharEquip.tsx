@@ -1,6 +1,7 @@
-import { Box, CardHeader, Chip, Paper, styled, Typography } from "@mui/material";
+import { Box, Chip, Divider, styled, Typography } from "@mui/material";
 import React from "react";
 import { User } from "../../@types/type";
+import ResultCard from "./ResultCard";
 
 interface Props {
   user?: User;
@@ -94,23 +95,11 @@ const ResultCharEquip = ({ user }: Props) => {
     return null;
   }
 
-  const { equipments, abilities, engraves } = user;
-
-  const parsedAbility: { title: string; value: any }[] = [];
-
-  abilities?.forEach((item, index) => {
-    if (index % 2 === 0) {
-      const value = abilities[index + 1];
-      parsedAbility.push({ title: item, value });
-    }
-  });
-
-  console.log(user);
+  const { equipments, engraves } = user;
 
   return (
-    <Paper>
-      <CardHeader title="장착 장비" titleTypographyProps={{ variant: "h6" }} />
-      <Box px={2} pb={2} display="flex" flexWrap="wrap">
+    <ResultCard title="장착 장비">
+      <Box display="flex" flexWrap="wrap">
         {Object.keys(equipments).map((key, index) => {
           const equip = equipments[key];
           if (equip.name && index < 13)
@@ -153,7 +142,7 @@ const ResultCharEquip = ({ user }: Props) => {
           return null;
         })}
       </Box>
-      <Box px={2} pb={3}>
+      <Box sx={{ p: 1, border: (theme) => `1px solid ${theme.palette.divider}`, borderRadius: 2 }}>
         <Chip label="장착 각인" sx={{ mb: 2 }} />
         <Box display="flex">
           {equipments.slot15.name && (
@@ -188,22 +177,8 @@ const ResultCharEquip = ({ user }: Props) => {
           )}
         </Box>
       </Box>
-      <Box px={2} pb={2} display="flex">
-        <Box flex={1}>
-          <Chip label="특성" sx={{ mb: 1 }} />
-          <Box display="flex" flexWrap="wrap">
-            {parsedAbility?.map((ab) => (
-              <Box key={ab.title} display="flex" width="50%">
-                <Typography variant="body2" mr={1} gutterBottom>
-                  {ab.title}
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                  {ab.value}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
-        </Box>
+      <Divider sx={{ my: 2 }} />
+      <Box pb={2} display="flex">
         <Box flex={1}>
           <Chip label="각인" sx={{ mb: 1 }} />
           {engraves?.map((eng) => (
@@ -213,7 +188,7 @@ const ResultCharEquip = ({ user }: Props) => {
           ))}
         </Box>
       </Box>
-    </Paper>
+    </ResultCard>
   );
 };
 
