@@ -1,5 +1,6 @@
 import {
   FindUserRequest,
+  ResponseError,
   SetUser,
   UserAction,
   UserActionTypes,
@@ -7,7 +8,7 @@ import {
 } from "../../@types/redux/user.interface";
 import { User } from "../../@types/type";
 
-const { FIND_USER_REQUEST, SET_USER } = UserActionTypes;
+const { FIND_USER_REQUEST, SET_USER, RESPONSE_ERROR } = UserActionTypes;
 
 export const findUserRequest = (nickname: string): FindUserRequest => ({
   payload: { nickname },
@@ -17,6 +18,11 @@ export const findUserRequest = (nickname: string): FindUserRequest => ({
 export const setUser = (user?: User): SetUser => ({
   payload: { user },
   type: SET_USER,
+});
+
+export const responseError = (): ResponseError => ({
+  payload: {},
+  type: RESPONSE_ERROR,
 });
 
 const initialState: UserState = {
@@ -35,6 +41,11 @@ const UserReducer = (state = initialState, action: UserAction): UserState => {
       return {
         user: action.payload.user,
         status: "ok",
+      };
+    case RESPONSE_ERROR:
+      return {
+        ...state,
+        status: "error",
       };
     default:
       return state;

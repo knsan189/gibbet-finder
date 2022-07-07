@@ -72,6 +72,11 @@ class UserService {
           const parseHtml = response.data.replace("<!DOCTYPE html>", "").replace(/\r?\n|\r/g, "");
           const $ = cheerio.load(parseHtml);
           const charClass = $(".profile-character-info__img").attr("alt") as string;
+
+          if (!charClass) {
+            throw new Error("존재하지 않는 유저입니다.");
+          }
+
           const itemLevel = $(".level-info2__expedition")
             .text()
             .replace("장착 아이템 레벨Lv.", "")

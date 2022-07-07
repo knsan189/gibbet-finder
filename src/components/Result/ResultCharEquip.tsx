@@ -105,6 +105,8 @@ const ResultCharEquip = ({ user }: Props) => {
     }
   });
 
+  console.log(user);
+
   return (
     <Paper>
       <CardHeader title="장착 장비" titleTypographyProps={{ variant: "h6" }} />
