@@ -38,6 +38,7 @@ const SearchBar = () => {
           disableElevation
           type="submit"
           loading={status === "loading"}
+          sx={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
         >
           검색
         </LoadingButton>

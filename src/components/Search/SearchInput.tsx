@@ -10,18 +10,18 @@ interface Props {
 }
 
 const InputBox = styled(Box)(({ theme }) => ({
-  background: theme.palette.grey[200],
+  background: theme.palette.mode === "light" ? theme.palette.grey[200] : theme.palette.grey[700],
   borderRadius: theme.shape.borderRadius,
   width: "100%",
   maxWidth: 400,
+  borderTopRightRadius: 0,
+  borderBottomRightRadius: 0,
 }));
 
 const SearchInput = ({ value, onChange, onClear, placeholder }: Props) => {
   return (
     <InputBox display="flex" alignItems="center" position="relative">
-      <Box px={1} py={0.5}>
-        <Search color="disabled" />
-      </Box>
+      <Search color="disabled" sx={{ px: 1 }} />
       <InputBase value={value} onChange={onChange} fullWidth placeholder={placeholder} />
       {value && (
         <IconButton
