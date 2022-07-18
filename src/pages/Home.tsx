@@ -1,10 +1,12 @@
 import { Box, LinearProgress, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { History } from "../@types/redux/user.interface";
 import Result from "../components/Result/Result";
 import Search from "../components/Search/Search";
 import { RootState } from "../redux/reducers";
 import { getGibbetList } from "../redux/reducers/gibbet";
+import { setHistories } from "../redux/reducers/user";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -13,6 +15,11 @@ const Home = () => {
   useEffect(() => {
     if (!gibbets.length) {
       dispatch(getGibbetList());
+      const localData = localStorage.getItem("history");
+      if (localData) {
+        const histories: History[] = JSON.parse(localData);
+        dispatch(setHistories(histories));
+      }
     }
   }, [dispatch, gibbets]);
 

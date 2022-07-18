@@ -1,4 +1,4 @@
-import { Box, Chip, Divider, styled, Typography } from "@mui/material";
+import { Box, Chip, styled, Typography } from "@mui/material";
 import React from "react";
 import { User } from "../../@types/type";
 import ResultCard from "./ResultCard";
@@ -8,7 +8,7 @@ interface Props {
 }
 
 const ImgBox = styled(Box)(({ theme }) => ({
-  borderRadius: theme.spacing(0.5),
+  borderRadius: theme.spacing(0.3),
   height: 50,
   width: 50,
   display: "flex",
@@ -80,7 +80,7 @@ const getText = (grade: number) => {
     case 3:
       return "희귀";
     case 4:
-      return "영웅";
+      return "전설";
     case 5:
       return "유물";
     case 6:
@@ -99,7 +99,7 @@ const ResultCharEquip = ({ user }: Props) => {
 
   return (
     <ResultCard title="장착 장비">
-      <Box display="flex" flexWrap="wrap">
+      <Box display="flex" flexWrap="wrap" mb={1}>
         {Object.keys(equipments).map((key, index) => {
           const equip = equipments[key];
           if (equip.name && index < 13)
@@ -113,8 +113,8 @@ const ResultCharEquip = ({ user }: Props) => {
                         position: "absolute",
                         bottom: 0,
                         width: "100%",
-                        height: 7,
-                        borderTop: `1px solid white`,
+                        height: 5,
+                        borderTop: (theme) => `1px solid ${theme.palette.background.default}`,
                       }}
                     >
                       <QualityBar
@@ -133,7 +133,8 @@ const ResultCharEquip = ({ user }: Props) => {
                   ))}
                   {equip.quality && equip.quality >= 0 && (
                     <Typography variant="caption">
-                      {getText(equip.grade)} / 품질 {equip.quality}
+                      {getText(equip.grade)} /{" "}
+                      <span style={{ color: getColor(equip.quality) }}>품질 {equip.quality}</span>
                     </Typography>
                   )}
                 </Box>
@@ -142,50 +143,54 @@ const ResultCharEquip = ({ user }: Props) => {
           return null;
         })}
       </Box>
-      <Box sx={{ p: 1, border: (theme) => `1px solid ${theme.palette.divider}`, borderRadius: 2 }}>
+      <Box
+        p={2}
+        sx={{ border: (theme) => `1px solid ${theme.palette.divider}`, borderRadius: 2 }}
+        width="50%"
+      >
         <Chip label="장착 각인" sx={{ mb: 2 }} />
         <Box display="flex">
-          {equipments.slot15.name && (
-            <Box display="flex" flex={1}>
-              <ImgBox sx={{ borderRadius: "50%" }}>
-                <img
-                  src={equipments.slot15.img}
-                  alt={equipments.slot15.name}
-                  style={{ width: "100%" }}
-                />
-              </ImgBox>
-              <Box ml={1}>
-                <Typography variant="body2">{equipments.slot15.name}</Typography>
-                <Typography variant="caption">활성도 + {equipments.slot15.quality}</Typography>
+          <Box flex={1}>
+            {equipments.slot15.name && (
+              <Box display="flex" flex={1} pb={2}>
+                <ImgBox sx={{ borderRadius: "50%" }}>
+                  <img
+                    src={equipments.slot15.img}
+                    alt={equipments.slot15.name}
+                    style={{ width: "100%" }}
+                  />
+                </ImgBox>
+                <Box ml={1}>
+                  <Typography variant="subtitle2">{equipments.slot15.name}</Typography>
+                  <Typography variant="caption">활성도 + {equipments.slot15.quality}</Typography>
+                </Box>
               </Box>
-            </Box>
-          )}
-          {equipments.slot14.name && (
-            <Box display="flex" flex={1}>
-              <ImgBox sx={{ borderRadius: "50%" }}>
-                <img
-                  src={equipments.slot14.img}
-                  alt={equipments.slot14.name}
-                  style={{ width: "100%" }}
-                />
-              </ImgBox>
-              <Box ml={1}>
-                <Typography variant="body2">{equipments.slot14.name}</Typography>
-                <Typography variant="caption">활성도 + {equipments.slot14.quality}</Typography>
+            )}
+            {equipments.slot14.name && (
+              <Box display="flex" flex={1}>
+                <ImgBox sx={{ borderRadius: "50%" }}>
+                  <img
+                    src={equipments.slot14.img}
+                    alt={equipments.slot14.name}
+                    style={{ width: "100%" }}
+                  />
+                </ImgBox>
+                <Box ml={1}>
+                  <Typography variant="subtitle2">{equipments.slot14.name}</Typography>
+                  <Typography variant="caption">활성도 + {equipments.slot14.quality}</Typography>
+                </Box>
               </Box>
+            )}
+          </Box>
+          <Box display="flex" flex={1}>
+            <Box flex={1} pl={2}>
+              {engraves?.map((eng) => (
+                <Typography variant="body2" key={eng} gutterBottom>
+                  {eng}
+                </Typography>
+              ))}
             </Box>
-          )}
-        </Box>
-      </Box>
-      <Divider sx={{ my: 2 }} />
-      <Box pb={2} display="flex">
-        <Box flex={1}>
-          <Chip label="각인" sx={{ mb: 1 }} />
-          {engraves?.map((eng) => (
-            <Typography variant="body2" key={eng} gutterBottom>
-              {eng}
-            </Typography>
-          ))}
+          </Box>
         </Box>
       </Box>
     </ResultCard>

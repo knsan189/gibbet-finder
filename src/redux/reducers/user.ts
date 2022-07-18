@@ -1,6 +1,8 @@
 import {
   FindUserRequest,
+  History,
   ResponseError,
+  SetHistories,
   SetUser,
   UserAction,
   UserActionTypes,
@@ -8,7 +10,7 @@ import {
 } from "../../@types/redux/user.interface";
 import { User } from "../../@types/type";
 
-const { FIND_USER_REQUEST, SET_USER, RESPONSE_ERROR } = UserActionTypes;
+const { FIND_USER_REQUEST, SET_USER, SET_HISTORIES, RESPONSE_ERROR } = UserActionTypes;
 
 export const findUserRequest = (nickname: string): FindUserRequest => ({
   payload: { nickname },
@@ -20,6 +22,11 @@ export const setUser = (user?: User): SetUser => ({
   type: SET_USER,
 });
 
+export const setHistories = (histories: History[]): SetHistories => ({
+  payload: { histories },
+  type: SET_HISTORIES,
+});
+
 export const responseError = (): ResponseError => ({
   payload: {},
   type: RESPONSE_ERROR,
@@ -28,6 +35,7 @@ export const responseError = (): ResponseError => ({
 const initialState: UserState = {
   user: undefined,
   status: "ok",
+  histories: [],
 };
 
 const UserReducer = (state = initialState, action: UserAction): UserState => {
@@ -38,10 +46,10 @@ const UserReducer = (state = initialState, action: UserAction): UserState => {
         status: "loading",
       };
     case SET_USER:
-      return {
-        user: action.payload.user,
-        status: "ok",
-      };
+      return { ...state, user: action.payload.user, status: "ok" };
+    case SET_HISTORIES:
+      localStorage.setItem("history", JSON.stringify(action.payload.histories));
+      return { ...state, histories: action.payload.histories };
     case RESPONSE_ERROR:
       return {
         ...state,

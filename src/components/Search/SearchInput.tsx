@@ -1,11 +1,10 @@
-import { Clear, Search } from "@mui/icons-material";
-import { Box, IconButton, InputBase, styled } from "@mui/material";
-import React from "react";
+import { Search } from "@mui/icons-material";
+import { AutocompleteRenderInputParams, Box, InputBase, styled } from "@mui/material";
+import React, { forwardRef } from "react";
 
 interface Props {
-  value: string;
+  params: AutocompleteRenderInputParams;
   placeholder?: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onClear: () => void;
 }
 
@@ -13,17 +12,24 @@ const InputBox = styled(Box)(({ theme }) => ({
   background: theme.palette.mode === "light" ? theme.palette.grey[200] : theme.palette.grey[700],
   borderRadius: theme.shape.borderRadius,
   width: "100%",
+  height: "100%",
   maxWidth: 400,
+  minWidth: 300,
   borderTopRightRadius: 0,
   borderBottomRightRadius: 0,
 }));
 
-const SearchInput = ({ value, onChange, onClear, placeholder }: Props) => {
+const SearchInput = forwardRef(({ params, placeholder }: Props, ref) => {
   return (
-    <InputBox display="flex" alignItems="center" position="relative">
+    <InputBox display="flex" alignItems="center" position="relative" ref={params.InputProps.ref}>
       <Search color="disabled" sx={{ px: 1 }} />
-      <InputBase value={value} onChange={onChange} fullWidth placeholder={placeholder} />
-      {value && (
+      <InputBase
+        fullWidth
+        placeholder={placeholder}
+        inputRef={ref}
+        inputProps={{ ...params.inputProps }}
+      />
+      {/* {value && (
         <IconButton
           sx={{ position: "absolute", top: "50%", transform: "translateY(-50%)", right: 0 }}
           onClick={onClear}
@@ -31,9 +37,9 @@ const SearchInput = ({ value, onChange, onClear, placeholder }: Props) => {
         >
           <Clear />
         </IconButton>
-      )}
+      )} */}
     </InputBox>
   );
-};
+});
 
 export default SearchInput;
