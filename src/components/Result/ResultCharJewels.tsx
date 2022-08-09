@@ -32,6 +32,8 @@ const getBackground = (grade: number): string => {
       return purple;
     case 4:
       return orange;
+    case 5:
+      return orange;
     default:
       return green;
   }
