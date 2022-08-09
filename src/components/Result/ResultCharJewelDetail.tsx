@@ -21,10 +21,8 @@ const ResultCharJewelDetail = ({ onClose, popover, jewel }: Props) => {
       disableRestoreFocus
     >
       <Box p={1}>
-        <Typography variant="subtitle2">
-          {jewel?.level} {jewel?.skill.name}
-        </Typography>
-        <Typography variant="body2">{jewel?.skill.effect}</Typography>
+        <Typography variant="subtitle2">{jewel?.name}</Typography>
+        <Typography variant="body2">{jewel?.skill}</Typography>
       </Box>
     </Popover>
   );

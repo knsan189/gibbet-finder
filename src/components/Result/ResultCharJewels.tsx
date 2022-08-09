@@ -61,7 +61,7 @@ const ResultCharJewels = ({ jewels }: Props) => {
               onMouseEnter={(event) => handleOpen(event, jewel)}
               onMouseLeave={onClose}
             >
-              <img src={jewel.img} alt={jewel.info} style={{ width: "80%" }} />
+              <img src={jewel.img} alt={jewel.name} style={{ width: "80%" }} />
             </JewelBox>
             <Typography variant="caption">{jewel.level}</Typography>
           </Box>

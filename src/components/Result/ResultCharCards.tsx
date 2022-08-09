@@ -15,7 +15,7 @@ const CardBox = styled(Box)<{ offset: number }>(({ theme, offset }) => ({
     backgroundPositionX: offset,
     position: "absolute",
     top: 0,
-    left: 0,
+    left: -3,
     right: 0,
     bottom: 0,
   },
@@ -25,7 +25,7 @@ const CardAwake = styled(Box)(({ theme }) => ({
   position: "absolute",
   bottom: 10,
   height: 36,
-  width: "calc(100% - 10px)",
+  width: "calc(100% - 12px)",
   left: "50%",
   transform: "translateX(-50%)",
   background: `url(${CARD_AWAKEN}) no-repeat`,
@@ -81,11 +81,11 @@ const ResultCharCards = ({ cards }: Props) => {
           </Box>
         ))}
       </Box>
-      <Box pb={2}>
+      <Box py={2}>
         <Chip label="장착 효과" sx={{ mb: 1 }} />
         {cards?.cardSet.map((set, index) => (
           <Box key={index}>
-            <Typography variant="body2">
+            <Typography variant="body2" gutterBottom>
               - {set.title} : {set.effect}
             </Typography>
           </Box>
