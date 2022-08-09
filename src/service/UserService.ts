@@ -249,9 +249,8 @@ class UserService {
                 const jewelLevel = jewelData.Element_001.value.slotData.rtString;
                 const jewelSkill = GemSkillEffect.find(
                   ({ EquipGemSlotIndex }: any) => EquipGemSlotIndex === index,
-                ).SkillDesc;
+                ).SkillDesc.replace(tagRegex, "");
                 const jewelGrade = jewelData.Element_001.value.slotData.iconGrade;
-
                 jewels.push({
                   name: jewelName,
                   img: jewelImg,
