@@ -210,9 +210,7 @@ class UserService {
           if (text.includes("$.Profile =")) {
             text = text.replace("$.Profile =", "");
             const data = JSON.parse(text.substring(0, text.length - 1));
-            const Equip = data.Equip;
-            const Engrave = data.Engrave;
-            const Skill = data.Skill;
+            const { Equip, Engrave, Skill, GemSkillEffect } = data;
 
             Object.keys(Skill).forEach((key) => {
               const skillData = Skill[key];
@@ -243,15 +241,15 @@ class UserService {
               }
             });
 
-            console.log(skills);
-
             Object.keys(Equip).forEach((key, index) => {
               if (key.includes("Gem")) {
                 const jewelData = Equip[key];
                 const jewelName = jewelData.Element_000.value.replace(tagRegex, "");
                 const jewelImg = `https://cdn-lostark.game.onstove.com/${jewelData.Element_001.value.slotData.iconPath}`;
                 const jewelLevel = jewelData.Element_001.value.slotData.rtString;
-                const jewelSkill = jewelData.Element_004.value.Element_001.replace(tagRegex, "");
+                const jewelSkill = GemSkillEffect.find(
+                  ({ EquipGemSlotIndex }: any) => EquipGemSlotIndex === index,
+                ).SkillDesc;
                 const jewelGrade = jewelData.Element_001.value.slotData.iconGrade;
 
                 jewels.push({
