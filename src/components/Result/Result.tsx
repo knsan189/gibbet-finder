@@ -1,13 +1,24 @@
-import { Box, CircularProgress, Drawer, Grid, styled, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardMedia,
+  CircularProgress,
+  Drawer,
+  Grid,
+  styled,
+  Typography,
+} from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/reducers";
 import ResultCharAbility from "./ResultCharAbility";
 import ResultCharCards from "./ResultCharCards";
+import ResultCharEngraves from "./ResultCharEngraves";
 import ResultCharEquip from "./ResultCharEquip";
 import ResultCharInfo from "./ResultCharInfo";
 import ResultCharJewels from "./ResultCharJewels";
 import ResultCharList from "./ResultCharList";
+import ResultCharTripod from "./ResultCharTripod";
 import ResultGibbet from "./ResultGibbet";
 
 const width = 800;
@@ -44,15 +55,26 @@ const Result = () => {
           <Grid item md={12}>
             <ResultGibbet user={user} />
           </Grid>
-          <Grid item md={8}>
-            <ResultCharInfo user={user} />
+          <Grid container item md={4} direction="column" spacing={2}>
+            <Grid item>
+              <Card>
+                <CardMedia component="img" image={user?.charImg} height="300" />
+              </Card>
+            </Grid>
+            <Grid item>
+              <ResultCharAbility user={user} />
+            </Grid>
           </Grid>
-          <Grid item md={4}>
-            <ResultCharAbility user={user} />
+          <Grid item md={8}>
+            <Box mb={1}>
+              <ResultCharInfo user={user} />
+            </Box>
+            <ResultCharEngraves user={user} />
           </Grid>
           <Grid item>
             <ResultCharEquip user={user} />
           </Grid>
+          <Grid item>{user?.skills ? <ResultCharTripod skills={user.skills} /> : null}</Grid>
           <Grid item md={12}>
             <ResultCharJewels jewels={user?.jewels} />
           </Grid>

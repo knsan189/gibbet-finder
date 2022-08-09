@@ -2,6 +2,7 @@ import { Box, Chip, styled, Typography } from "@mui/material";
 import React from "react";
 import { User } from "../../@types/type";
 import ResultCard from "./ResultCard";
+import ResultCharEquipTripod from "./ResultCharTripod";
 
 interface Props {
   user?: User;
@@ -95,7 +96,7 @@ const ResultCharEquip = ({ user }: Props) => {
     return null;
   }
 
-  const { equipments, engraves } = user;
+  const { equipments } = user;
 
   return (
     <ResultCard title="장착 장비">
@@ -142,56 +143,6 @@ const ResultCharEquip = ({ user }: Props) => {
             );
           return null;
         })}
-      </Box>
-      <Box
-        p={2}
-        sx={{ border: (theme) => `1px solid ${theme.palette.divider}`, borderRadius: 2 }}
-        width="50%"
-      >
-        <Chip label="장착 각인" sx={{ mb: 2 }} />
-        <Box display="flex">
-          <Box flex={1}>
-            {equipments.slot15.name && (
-              <Box display="flex" flex={1} pb={2}>
-                <ImgBox sx={{ borderRadius: "50%" }}>
-                  <img
-                    src={equipments.slot15.img}
-                    alt={equipments.slot15.name}
-                    style={{ width: "100%" }}
-                  />
-                </ImgBox>
-                <Box ml={1}>
-                  <Typography variant="subtitle2">{equipments.slot15.name}</Typography>
-                  <Typography variant="caption">활성도 + {equipments.slot15.quality}</Typography>
-                </Box>
-              </Box>
-            )}
-            {equipments.slot14.name && (
-              <Box display="flex" flex={1}>
-                <ImgBox sx={{ borderRadius: "50%" }}>
-                  <img
-                    src={equipments.slot14.img}
-                    alt={equipments.slot14.name}
-                    style={{ width: "100%" }}
-                  />
-                </ImgBox>
-                <Box ml={1}>
-                  <Typography variant="subtitle2">{equipments.slot14.name}</Typography>
-                  <Typography variant="caption">활성도 + {equipments.slot14.quality}</Typography>
-                </Box>
-              </Box>
-            )}
-          </Box>
-          <Box display="flex" flex={1}>
-            <Box flex={1} pl={2}>
-              {engraves?.map((eng) => (
-                <Typography variant="body2" key={eng} gutterBottom>
-                  {eng}
-                </Typography>
-              ))}
-            </Box>
-          </Box>
-        </Box>
       </Box>
     </ResultCard>
   );

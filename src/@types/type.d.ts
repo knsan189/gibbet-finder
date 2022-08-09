@@ -1,6 +1,7 @@
-import { CardSet, Equipments, Jewel, LoaCard, Server } from "../service/UserService";
+import { CardSet, Equipments, Jewel, LoaCard, Server, Skill } from "../service/UserService";
 
 export interface User {
+  charImg: string;
   itemLevel: number;
   charLevel: string;
   charClass: string;
@@ -21,4 +22,5 @@ export interface User {
     level: string;
   };
   equipments: Equipments;
+  skills: Skill[];
 }
