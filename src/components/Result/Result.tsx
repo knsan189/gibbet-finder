@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/reducers";
 import ResultCharAbility from "./ResultCharAbility";
 import ResultCharCards from "./ResultCharCards";
-import ResultCharEngraves from "./ResultCharEngraves";
+import ResultCharEngraves from "./ResultCharEngraveList";
 import ResultCharEquip from "./ResultCharEquip";
 import ResultCharInfo from "./ResultCharInfo";
 import ResultCharJewels from "./ResultCharJewels";
@@ -58,7 +58,7 @@ const Result = () => {
           <Grid container item md={4} direction="column" spacing={2}>
             <Grid item>
               <Card>
-                <CardMedia component="img" image={user?.charImg} height="300" />
+                <CardMedia component="img" image={user?.charImg} />
               </Card>
             </Grid>
             <Grid item>
@@ -66,7 +66,7 @@ const Result = () => {
             </Grid>
           </Grid>
           <Grid item md={8}>
-            <Box mb={1}>
+            <Box mb={2}>
               <ResultCharInfo user={user} />
             </Box>
             <ResultCharEngraves user={user} />

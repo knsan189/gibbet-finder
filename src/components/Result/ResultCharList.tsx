@@ -1,14 +1,30 @@
-import { Avatar, Box, Chip, Paper, Typography } from "@mui/material";
+import { Avatar, Box, Chip, Paper, styled, Typography } from "@mui/material";
 import React from "react";
+import { useDispatch } from "react-redux";
 import { User } from "../../@types/type";
+import { findUserRequest } from "../../redux/reducers/user";
 import ResultCard from "./ResultCard";
 
 interface Props {
   list?: User["allCharList"];
 }
 
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  marginRight: theme.spacing(1),
+  marginBottom: theme.spacing(1),
+  cursor: "pointer",
+  "&:hover": {
+    background: theme.palette.action.hover,
+  },
+}));
+
 const ResultCharList = ({ list }: Props) => {
+  const dispatch = useDispatch();
   if (!list) return null;
+  const handleClick = (name?: string) => () => {
+    if (!name) return;
+    dispatch(findUserRequest(name));
+  };
   return (
     <ResultCard title="원정대 목록">
       {list.map((server, index) => {
@@ -17,7 +33,7 @@ const ResultCharList = ({ list }: Props) => {
             <Chip label={server.serverName.replace("@", "")} />
             <Box display="flex" flexWrap="wrap" pt={1}>
               {server.charList.map((char) => (
-                <Paper key={char.charName} sx={{ mr: 1, mb: 1 }}>
+                <StyledPaper key={char.charName} onClick={handleClick(char.charName)}>
                   <Box p={1} display="flex" alignItems="center">
                     <Box pr={1}>
                       <Avatar src={char.thumbnail} />
@@ -29,7 +45,7 @@ const ResultCharList = ({ list }: Props) => {
                       </Typography>
                     </Box>
                   </Box>
-                </Paper>
+                </StyledPaper>
               ))}
             </Box>
           </Box>

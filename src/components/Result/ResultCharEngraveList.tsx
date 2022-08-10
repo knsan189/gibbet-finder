@@ -1,7 +1,8 @@
-import { Box, Chip, styled, Typography } from "@mui/material";
+import { Box, Chip, Grid, styled, Typography } from "@mui/material";
 import React from "react";
 import { User } from "../../@types/type";
 import ResultCard from "./ResultCard";
+import ResultCharEngrave from "./ResultCharEngrave";
 
 interface Props {
   user?: User;
@@ -18,13 +19,21 @@ const ImgBox = styled(Box)(({ theme }) => ({
   position: "relative",
 }));
 
-const ResultCharEngraves = ({ user }: Props) => {
+const ResultCharEngraveList = ({ user }: Props) => {
   if (!user) return null;
-  const { engraves, equipments } = user;
+
+  const { engraves } = user;
+
   return (
     <ResultCard title="각인">
-      <Box display="flex">
-        <Box flex={1}>
+      <Grid container spacing={2}>
+        {engraves?.map((engrave) => (
+          <Grid item key={engrave} md={4}>
+            <ResultCharEngrave engrave={engrave} />
+          </Grid>
+        ))}
+
+        {/* <Box flex={1}>
           {equipments.slot15.name && (
             <Box display="flex" flex={1} pb={2}>
               <ImgBox sx={{ borderRadius: "50%", width: 40, height: 40 }}>
@@ -55,19 +64,10 @@ const ResultCharEngraves = ({ user }: Props) => {
               </Box>
             </Box>
           )}
-        </Box>
-        <Box display="flex" flex={1}>
-          <Box flex={1} pl={2}>
-            {engraves?.map((eng) => (
-              <Typography variant="body2" key={eng} gutterBottom>
-                {eng}
-              </Typography>
-            ))}
-          </Box>
-        </Box>
-      </Box>
+        </Box> */}
+      </Grid>
     </ResultCard>
   );
 };
 
-export default ResultCharEngraves;
+export default ResultCharEngraveList;

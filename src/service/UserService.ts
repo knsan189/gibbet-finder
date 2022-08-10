@@ -209,9 +209,12 @@ class UserService {
 
           if (text.includes("$.Profile =")) {
             text = text.replace("$.Profile =", "");
+
+            // JSON
             const data = JSON.parse(text.substring(0, text.length - 1));
             const { Equip, Engrave, Skill, GemSkillEffect } = data;
 
+            // 스킬, 트라이포드
             Object.keys(Skill).forEach((key) => {
               const skillData = Skill[key];
               const skill: Skill = {

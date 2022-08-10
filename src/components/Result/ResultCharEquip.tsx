@@ -1,8 +1,7 @@
-import { Box, Chip, styled, Typography } from "@mui/material";
+import { Box, styled, Typography } from "@mui/material";
 import React from "react";
 import { User } from "../../@types/type";
 import ResultCard from "./ResultCard";
-import ResultCharEquipTripod from "./ResultCharTripod";
 
 interface Props {
   user?: User;
