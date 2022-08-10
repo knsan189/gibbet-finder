@@ -22,7 +22,7 @@ const ImgBox = styled(Box)(({ theme }) => ({
 const ResultCharEngraveList = ({ user }: Props) => {
   if (!user) return null;
 
-  const { engraves, equipments } = user;
+  const { engraves } = user;
 
   return (
     <ResultCard title="각인">

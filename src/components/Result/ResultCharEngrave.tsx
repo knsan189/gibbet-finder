@@ -1,21 +1,10 @@
-import { Avatar, Box, styled, Typography } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import React, { useMemo } from "react";
 import { ENGRAVE_ICONS } from "../../utils/const";
 
 interface Props {
   engrave: string;
 }
-
-const ImgBox = styled(Box)(({ theme }) => ({
-  borderRadius: theme.spacing(0.3),
-  height: 50,
-  width: 50,
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  overflow: "hidden",
-  position: "relative",
-}));
 
 const ResultCharEngrave = ({ engrave }: Props) => {
   const parsedEngrave = useMemo(() => {
