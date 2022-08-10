@@ -1,6 +1,6 @@
 import { LoadingButton } from "@mui/lab";
 import { Autocomplete, Box } from "@mui/material";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { History } from "../../@types/redux/user.interface";
 import { RootState } from "../../redux/reducers";
@@ -11,7 +11,7 @@ import SearchOption from "./SearchOption";
 const SearchBar = () => {
   const [value, setValue] = useState<History | string | null>(null);
   const dispatch = useDispatch();
-  const { status, histories } = useSelector((state: RootState) => state.user);
+  const { status, histories, user } = useSelector((state: RootState) => state.user);
   const inputRef = useRef<HTMLInputElement>();
 
   const handleChange = (event: any, option: History | string | null) => {
@@ -44,6 +44,12 @@ const SearchBar = () => {
     if (typeof option === "string") return option;
     return option.keyword;
   };
+
+  useEffect(() => {
+    if (user?.charName && inputRef.current) {
+      inputRef.current.value = user?.charName;
+    }
+  }, [user]);
 
   return (
     <Box display="flex" m={3} justifyContent="center" position="relative">
