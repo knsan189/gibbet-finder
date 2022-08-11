@@ -30,6 +30,7 @@
     "path": "^0.12.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-image-crop": "^10.0.6",
     "react-redux": "^8.0.2",
     "react-router-dom": "6",
     "react-scripts": "5.0.1",
@@ -45,7 +46,7 @@
     "eject": "react-scripts eject",
     "postinstall": "electron-builder install-app-deps",
     "dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && tsc -p electron -w\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",
-    "electron:build": "yarn build && tsc -p electron && electron-builder"
+    "deploy": "yarn build && tsc -p electron && electron-builder"
   },
   "build": {
     "extends": null,

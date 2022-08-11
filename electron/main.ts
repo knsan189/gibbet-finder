@@ -1,11 +1,13 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, desktopCapturer } from "electron";
 import * as path from "path";
 import installExtension, { REACT_DEVELOPER_TOOLS } from "electron-devtools-installer";
 import axios from "axios";
 import { ipcMain } from "electron";
 
+let win: BrowserWindow;
+
 function createWindow() {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 1280,
     height: 720,
     resizable: !app.isPackaged,
@@ -43,8 +45,15 @@ function createWindow() {
 }
 
 ipcMain.handle("request", async (_, axios_request) => {
+  console.log("User Search Request");
   const result = await axios(axios_request);
   return { data: result.data, status: result.status };
+});
+
+ipcMain.handle("screenshot", async () => {
+  console.log("screenshot requested");
+  const sources = await desktopCapturer.getSources({ types: ["window", "screen"] });
+  return { sources };
 });
 
 app.whenReady().then(() => {
