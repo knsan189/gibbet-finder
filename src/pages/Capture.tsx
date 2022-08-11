@@ -4,6 +4,7 @@ import React, { useRef, useState } from "react";
 import { screenCapture } from "../lib/capture";
 import "react-image-crop/dist/ReactCrop.css";
 import ReactCrop, { Crop, PixelCrop } from "react-image-crop";
+import { createWorker } from "tesseract.js";
 
 const HiddenVideo = styled("video")(() => ({
   position: "absolute",
@@ -19,7 +20,7 @@ const Capture = () => {
     width: 50,
     height: 50,
   });
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState("./images/test.jpg");
   const imageRef = useRef<HTMLImageElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -79,11 +80,23 @@ const Capture = () => {
       naturalHeight,
     );
 
-    const base64 = canvas.toDataURL("image/jpeg");
+    const base64 = canvas.toDataURL("image/png");
     ctx.restore();
 
     setCrop(undefined);
     setImage(base64);
+  };
+
+  const handleOCR = async () => {
+    const worker = createWorker();
+    await worker.load();
+    await worker.loadLanguage("kor");
+    await worker.initialize("kor");
+    const {
+      data: { text },
+    } = await worker.recognize(image);
+    console.log(text);
+    await worker.terminate();
   };
 
   return (
@@ -102,6 +115,9 @@ const Capture = () => {
           </ReactCrop>
         )}
       </Box>
+      <Button onClick={handleOCR} variant="contained">
+        OCR
+      </Button>
     </Box>
   );
 };
