@@ -1,6 +1,6 @@
 import { Crop as CropIcon } from "@mui/icons-material";
 import { Box, Button, styled } from "@mui/material";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { screenCapture } from "../lib/capture";
 import "react-image-crop/dist/ReactCrop.css";
 import ReactCrop, { Crop, PixelCrop } from "react-image-crop";
@@ -12,6 +12,12 @@ const HiddenVideo = styled("video")(() => ({
   left: -100000,
 }));
 
+declare global {
+  interface Window {
+    cv?: any;
+  }
+}
+
 const Capture = () => {
   const [crop, setCrop] = useState<Crop | undefined>({
     unit: "%", // Can be 'px' or '%'
@@ -20,7 +26,7 @@ const Capture = () => {
     width: 50,
     height: 50,
   });
-  const [image, setImage] = useState("./images/test.jpg");
+  const [image, setImage] = useState("./images/ts.png");
   const imageRef = useRef<HTMLImageElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -98,6 +104,10 @@ const Capture = () => {
     console.log(text);
     await worker.terminate();
   };
+
+  useEffect(() => {
+    console.log(window.cv);
+  }, []);
 
   return (
     <Box p={2}>
