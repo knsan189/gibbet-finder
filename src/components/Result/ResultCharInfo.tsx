@@ -14,7 +14,7 @@ const ResultCharInfo = ({ user }: Props) => {
 
   const { itemLevel, charClass, charLevel, charName, serverName, guildName, wisdom } = user;
   return (
-    <ResultCard title="정보">
+    <ResultCard title="기본 정보" paperProps={{ sx: { height: "100%" } }} disableAccordion>
       <Box display="flex" flexWrap="wrap">
         <Box display="flex" justifyContent="start" alignItems="center" width="50%" mb={1}>
           <Chip label="서버명" />

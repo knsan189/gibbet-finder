@@ -10,9 +10,8 @@ function createWindow() {
     height: 720,
     resizable: !app.isPackaged,
     webPreferences: {
-      // contextIsolation: false,
       nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation: true,
       preload: path.join(__dirname, "preload.js"),
     },
   });

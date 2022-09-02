@@ -25,7 +25,7 @@ const ResultCharEngraveList = ({ user }: Props) => {
   const { engraves } = user;
 
   return (
-    <ResultCard title="각인">
+    <ResultCard title="각인 효과">
       <Grid container spacing={2}>
         {engraves?.map((engrave) => (
           <Grid item key={engrave} md={4}>

@@ -12,27 +12,27 @@ const Home = () => {
   const dispatch = useDispatch();
   const { gibbets } = useSelector((state: RootState) => state.gibbets);
 
-  useEffect(() => {
-    if (!gibbets.length) {
-      dispatch(getGibbetList());
-      const localData = localStorage.getItem("history");
-      if (localData) {
-        const histories: History[] = JSON.parse(localData);
-        dispatch(setHistories(histories));
-      }
-    }
-  }, [dispatch, gibbets]);
+  // useEffect(() => {
+  //   if (!gibbets.length) {
+  //     dispatch(getGibbetList());
+  //     const localData = localStorage.getItem("history");
+  //     if (localData) {
+  //       const histories: History[] = JSON.parse(localData);
+  //       dispatch(setHistories(histories));
+  //     }
+  //   }
+  // }, [dispatch, gibbets]);
 
-  if (!gibbets.length) {
-    return (
-      <Box sx={{ height: "100vh" }} display="flex" justifyContent="center" alignItems="center">
-        <Box width={500}>
-          <Typography variant="subtitle2">챈내 효수목록 불러들이는 중..</Typography>
-          <LinearProgress sx={{ borderRadius: 2 }} />
-        </Box>
-      </Box>
-    );
-  }
+  // if (!gibbets.length) {
+  //   return (
+  //     <Box sx={{ height: "100vh" }} display="flex" justifyContent="center" alignItems="center">
+  //       <Box width={500}>
+  //         <Typography variant="subtitle2">챈내 효수목록 불러들이는 중..</Typography>
+  //         <LinearProgress sx={{ borderRadius: 2 }} />
+  //       </Box>
+  //     </Box>
+  //   );
+  // }
 
   return (
     <Box display="flex">
