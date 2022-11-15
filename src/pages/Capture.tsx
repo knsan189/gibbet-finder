@@ -1,10 +1,8 @@
-import { Crop as CropIcon } from "@mui/icons-material";
-import { Box, Button, styled } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import { Box, Button, styled, Typography } from "@mui/material";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { screenCapture } from "../lib/capture";
-import "react-image-crop/dist/ReactCrop.css";
-import ReactCrop, { Crop, PixelCrop } from "react-image-crop";
 import { createWorker } from "tesseract.js";
+import { OpenCv } from "../App";
 
 const HiddenVideo = styled("video")(() => ({
   position: "absolute",
@@ -12,23 +10,30 @@ const HiddenVideo = styled("video")(() => ({
   left: -100000,
 }));
 
-declare global {
-  interface Window {
-    cv?: any;
-  }
-}
+const templateUrl = "./images/template.png";
+
+const setCanvasImage = (canvas: HTMLCanvasElement, url: string) => {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const img = new Image();
+  img.src = url;
+  img.onload = () => {
+    const { width, height } = img;
+    canvas.width = width;
+    canvas.height = height;
+    ctx.drawImage(img, 0, 0);
+    ctx.restore();
+  };
+};
 
 const Capture = () => {
-  const [crop, setCrop] = useState<Crop | undefined>({
-    unit: "%", // Can be 'px' or '%'
-    x: 25,
-    y: 25,
-    width: 50,
-    height: 50,
-  });
-  const [image, setImage] = useState("./images/ts.png");
-  const imageRef = useRef<HTMLImageElement>(null);
+  const cv = useContext(OpenCv);
+  const [image, setImage] = useState("./images/test.jpg");
   const videoRef = useRef<HTMLVideoElement>(null);
+  const tempRef = useRef<HTMLCanvasElement>(null);
+  const srcRef = useRef<HTMLCanvasElement>(null);
+  const dstRef = useRef<HTMLCanvasElement>(null);
 
   const callback = (base64: string) => {
     setImage(base64);
@@ -40,59 +45,6 @@ const Capture = () => {
     }
   };
 
-  const handleChangeCrop = (pixelCrop: PixelCrop) => {
-    setCrop(pixelCrop);
-  };
-
-  const handleCrop = () => {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    if (!imageRef.current || !ctx || !crop) return;
-
-    const { naturalWidth, naturalHeight, width, height } = imageRef.current;
-    const scaleX = naturalWidth / width;
-    const scaleY = naturalHeight / height;
-    const pixelRatio = window.devicePixelRatio;
-
-    canvas.width = Math.floor(crop.width * scaleX * pixelRatio);
-    canvas.height = Math.floor(crop.height * scaleY * pixelRatio);
-
-    ctx.scale(pixelRatio, pixelRatio);
-    ctx.imageSmoothingQuality = "high";
-
-    const cropX = crop.x * scaleX;
-    const cropY = crop.y * scaleY;
-
-    const centerX = naturalWidth / 2;
-    const centerY = naturalHeight / 2;
-
-    ctx.save();
-
-    ctx.translate(-cropX, -cropY);
-    // 4) Move the origin to the center of the original position
-    ctx.translate(centerX, centerY);
-    // 1) Move the center of the image to the origin (0,0)
-    ctx.translate(-centerX, -centerY);
-    ctx.drawImage(
-      imageRef.current,
-      0,
-      0,
-      naturalWidth,
-      naturalHeight,
-      0,
-      0,
-      naturalWidth,
-      naturalHeight,
-    );
-
-    const base64 = canvas.toDataURL("image/png");
-    ctx.restore();
-
-    setCrop(undefined);
-    setImage(base64);
-  };
-
   const handleOCR = async () => {
     const worker = createWorker();
     await worker.load();
@@ -102,12 +54,35 @@ const Capture = () => {
       data: { text },
     } = await worker.recognize(image);
     console.log(text);
-    await worker.terminate();
+    worker.terminate();
   };
 
   useEffect(() => {
-    console.log(window.cv);
+    if (srcRef.current) {
+      setCanvasImage(srcRef.current, "./images/test.jpg");
+    }
+
+    if (tempRef.current) {
+      setCanvasImage(tempRef.current, templateUrl);
+    }
   }, []);
+
+  const handleCv = () => {
+    if (!cv) return;
+    const src = cv.imread(srcRef.current);
+    const temp = cv.imread(tempRef.current);
+    let dst = new cv.Mat();
+    const mask = new cv.Mat();
+    cv.matchTemplate(src, temp, dst, cv.TM_CCOEFF_NORMED, mask);
+    const result = cv.minMaxLoc(dst, mask);
+    const maxPoint = result.maxLoc;
+    const rect = new cv.Rect(maxPoint.x, maxPoint.y + temp.rows, temp.cols + 300, temp.rows + 80);
+    dst = src.roi(rect);
+    cv.imshow(dstRef.current, dst);
+    src.delete();
+    dst.delete();
+    mask.delete();
+  };
 
   return (
     <Box p={2}>
@@ -115,19 +90,24 @@ const Capture = () => {
       <Button onClick={handleClick} variant="outlined" sx={{ mr: 1 }}>
         스크린샷 찍기
       </Button>
-      <Button variant="contained" onClick={handleCrop}>
-        <CropIcon />
-      </Button>
-      <Box pt={2}>
-        {image && (
-          <ReactCrop crop={crop} onChange={handleChangeCrop}>
-            <img ref={imageRef} src={image} alt="screen" />
-          </ReactCrop>
-        )}
-      </Box>
-      <Button onClick={handleOCR} variant="contained">
+      <Button onClick={handleOCR} variant="contained" sx={{ mr: 1 }} disabled>
         OCR
       </Button>
+      <Button onClick={handleCv} variant="outlined">
+        OpenCv
+      </Button>
+      <Box pt={2}>
+        <Typography variant="body2">Before</Typography>
+        <canvas ref={srcRef} style={{ width: "100%" }} />
+      </Box>
+      <Box pt={2}>
+        <Typography variant="body2">템플릿</Typography>
+        <canvas ref={tempRef} />
+      </Box>
+      <Box pt={2}>
+        <Typography variant="body2">after</Typography>
+        <canvas ref={dstRef} style={{ width: "100%" }} />
+      </Box>
     </Box>
   );
 };
