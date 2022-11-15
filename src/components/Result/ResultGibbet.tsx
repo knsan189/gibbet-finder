@@ -11,10 +11,12 @@ interface Props {
 }
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  height: "100%",
   position: "relative",
-
   color: theme.palette.success.contrastText,
+  display: "flex",
+  alignItems: "center",
+  padding: `0px ${theme.spacing(1)}`,
+  flex: 1,
 }));
 
 const ResultGibbet = ({ user }: Props) => {
@@ -53,10 +55,8 @@ const ResultGibbet = ({ user }: Props) => {
 
   if (loading) {
     return (
-      <Paper
-        sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: 100 }}
-      >
-        <CardHeader title="효수 판별 중.." titleTypographyProps={{ variant: "h6" }} />
+      <Paper sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <CardHeader title="효수 판별 중.." titleTypographyProps={{ variant: "subtitle2" }} />
         <Box>
           <CircularProgress />
         </Box>
@@ -70,15 +70,18 @@ const ResultGibbet = ({ user }: Props) => {
         background: (theme) => (result ? theme.palette.error.light : theme.palette.success.light),
       }}
     >
-      <CardHeader
+      <Typography variant="body2">{`${
+        result ? "😈 효수 걸린 닉네임입니다. 😈" : "😊 안전한 챈럼입니다."
+      }`}</Typography>
+      {/* <CardHeader
         title={`${result ? "😈 효수 걸린 닉네임입니다. 😈" : "😊 안전한 챈럼입니다."}`}
-        titleTypographyProps={{ variant: "h6" }}
-      />
-      {result && (
-        <Box px={2} pb={2}>
+        titleTypographyProps={{ variant: "subtitle2" }}
+      /> */}
+      {/* {result && (
+        <Box px={2} pb={1}>
           <Typography variant="body2">{result?.reason}</Typography>
         </Box>
-      )}
+      )} */}
     </StyledPaper>
   );
 };

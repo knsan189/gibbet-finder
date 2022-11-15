@@ -6,6 +6,7 @@ import { screenCapture } from "../lib/capture";
 import { OpenCv } from "../App";
 import UserService from "../service/UserService";
 import CaptureName from "../components/Capture/CaptureName";
+import { getOCRString } from "../utils/ocr";
 
 const HiddenVideo = styled("video")(() => ({
   position: "absolute",
@@ -15,36 +16,43 @@ const HiddenVideo = styled("video")(() => ({
 
 const templateUrl = "./images/template.png";
 
-const setCanvasImage = (canvas: HTMLCanvasElement, url: string) => {
+const setCanvasImage = (canvas: HTMLCanvasElement, url: string, x?: number, y?: number) => {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   const img = new Image();
   img.src = url;
   img.onload = () => {
     const { width, height } = img;
-    canvas.width = width;
-    canvas.height = height;
-    ctx.drawImage(img, 0, 0);
+    const { devicePixelRatio } = window;
+    canvas.width = x || width;
+    canvas.height = y || height;
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+    // ctx.save();
+    ctx.drawImage(img, 0, 0, x || width, y || height);
     ctx.restore();
   };
 };
 
 const Capture = () => {
   const cv = useContext(OpenCv);
-  const [image, setImage] = useState("./images/test.jpg");
-  const [users, setUsers] = useState<(User | null)[]>([]);
+  const [status, setStatus] = useState({
+    screenShot: false,
+    target: false,
+    result: false,
+  });
+  const [nicknames, setNicknames] = useState<string[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
   const tempRef = useRef<HTMLCanvasElement>(null);
   const srcRef = useRef<HTMLCanvasElement>(null);
   const dstRef = useRef<HTMLCanvasElement>(null);
 
-  const callback = (base64: string) => {
-    setImage(base64);
-  };
-
   const handleClick = async () => {
     if (videoRef.current) {
-      screenCapture(videoRef.current, callback);
+      screenCapture(videoRef.current, (base64: string) => {
+        const src = srcRef.current;
+        if (src) setCanvasImage(src, base64);
+        setStatus((prev) => ({ ...prev, screenShot: true }));
+      });
     }
   };
 
@@ -53,26 +61,34 @@ const Capture = () => {
     const ctx = dst?.getContext("2d");
     if (!dst || !ctx) return;
     const base64 = dst.toDataURL("image/png");
-    const worker = createWorker();
-    await worker.load();
-    await worker.loadLanguage("kor");
-    await worker.initialize("kor");
-    const {
-      data: { text },
-    } = await worker.recognize(base64);
-    const temp = text.replaceAll(" ", "").split("\n");
-    console.log(temp);
-    const promiseArray: Promise<User | null>[] = temp.map((nickname) =>
-      UserService.getChar(nickname),
-    );
-    const responses = await Promise.all(promiseArray);
-    setUsers(responses);
-    worker.terminate();
+    const kor = await getOCRString(base64, "kor");
+    const korPromiseArray: Promise<User | null>[] = kor.map((name) => UserService.getChar(name));
+    const korResponses = await Promise.all(korPromiseArray);
+    console.log(kor);
+    console.log(korResponses);
+
+    const indexArr: number[] = [];
+    korResponses.forEach((res, index) => {
+      if (res === null) {
+        indexArr.push(index);
+      }
+    });
+
+    // if (indexArr.length > 0) {
+    //   const eng = await getOCRString(base64);
+    //   const engPromiseArray: Promise<User | null>[] = eng.map((name) => UserService.getChar(name));
+    //   const engResponses = await Promise.all(engPromiseArray);
+    //   console.log(eng);
+    //   console.log(engResponses);
+    // }
+
+    // setUsers(responses);
   };
 
   useEffect(() => {
     if (srcRef.current) {
-      setCanvasImage(srcRef.current, "./images/test.jpg");
+      setCanvasImage(srcRef.current, "./images/screenshot.jpg", 1920, 1080);
+      setStatus((prev) => ({ ...prev, screenShot: true }));
     }
     if (tempRef.current) {
       setCanvasImage(tempRef.current, templateUrl);
@@ -100,12 +116,15 @@ const Capture = () => {
       const test = new cv.Mat();
       cv.bitwise_not(dst, test);
       cv.cvtColor(test, test, cv.COLOR_BGR2GRAY);
-      cv.imshow(dstRef.current, dst);
+      cv.convertScaleAbs(test, test, 1.2, 0);
+      cv.imshow(dstRef.current, test);
       src.delete();
       dst.delete();
       mask.delete();
+      test.delete();
       resolve("ok");
     });
+    setStatus((prev) => ({ ...prev, target: true }));
     handleOCR();
   };
 
@@ -115,7 +134,12 @@ const Capture = () => {
         <Button onClick={handleClick} variant="outlined" sx={{ mr: 1 }} startIcon={<Screenshot />}>
           스크린샷 찍기
         </Button>
-        <Button onClick={handleCv} variant="contained" startIcon={<Translate />}>
+        <Button
+          onClick={handleCv}
+          variant="contained"
+          startIcon={<Translate />}
+          disabled={!status.screenShot}
+        >
           글자 추출
         </Button>
       </Box>
@@ -130,6 +154,10 @@ const Capture = () => {
           <Grid item sm={3}>
             <Paper>
               <Box p={2}>
+                <Typography variant="h6">1번 파티 이미지</Typography>
+              </Box>
+              <Divider />
+              <Box p={2}>
                 <canvas ref={dstRef} style={{ width: "100%" }} />
               </Box>
             </Paper>
@@ -137,9 +165,13 @@ const Capture = () => {
           <Grid item sm={9}>
             <Paper>
               <Box p={2}>
-                {users.map((user, index) =>
+                <Typography variant="h6">1번 파티 결과</Typography>
+              </Box>
+              <Divider />
+              <Box p={2}>
+                {/* {users.map((user, index) =>
                   index > 3 ? null : <CaptureName key={index} user={user} />,
-                )}
+                )} */}
               </Box>
             </Paper>
           </Grid>
@@ -154,7 +186,7 @@ const Capture = () => {
               </Box>
             </Paper>
           </Grid>
-          <Box pt={2} display="none">
+          <Box pt={2}>
             <Typography variant="body2">템플릿</Typography>
             <canvas ref={tempRef} />
           </Box>

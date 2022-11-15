@@ -8,8 +8,8 @@ interface Props {
 
 const CaptureName = ({ user }: Props) => {
   return (
-    <Box display="flex">
-      <Box width={240} mr={2}>
+    <Box display="flex" pb={1}>
+      <Box width={240} mr={1}>
         <TextField value={user?.charName} size="small" fullWidth />
       </Box>
       {user && <ResultGibbet user={user} />}

@@ -20,11 +20,11 @@ function App() {
   const { theme } = useTheme();
   const { cv } = useOpencv();
 
-  React.useEffect(() => {
-    if (gibbets.length === 0) {
-      dispatch(getGibbetList());
-    }
-  }, [dispatch, gibbets]);
+  // React.useEffect(() => {
+  //   if (gibbets.length === 0) {
+  //     dispatch(getGibbetList());
+  //   }
+  // }, [dispatch, gibbets]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -43,7 +43,7 @@ function App() {
               alignItems="center"
             >
               <Box width={500}>
-                <Typography variant="subtitle2">opencv</Typography>
+                <Typography variant="subtitle2">OpenCv 로딩중..</Typography>
                 <LinearProgress sx={{ borderRadius: 2 }} />
               </Box>
             </Box>

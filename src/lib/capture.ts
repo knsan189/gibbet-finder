@@ -1,15 +1,16 @@
 export async function screenCapture(video: HTMLVideoElement, callback: Function) {
   const { ipcRenderer } = window.require("electron");
   const { sources } = await ipcRenderer.invoke("screenshot");
+  const source = sources.find((source: any) => source.name.includes("LOST ARK"));
 
-  console.log(sources);
-  const { id } = sources.find((source: any) => source.name.includes("LOST ARK"));
+  if (!source) return;
+
   const stream = await navigator.mediaDevices.getUserMedia({
     audio: false,
     video: {
       mandatory: {
         chromeMediaSource: "desktop",
-        chromeMediaSourceId: id,
+        chromeMediaSourceId: source.id,
         minWidth: 1920,
         maxWidth: 1920,
         minHeight: 1080,
