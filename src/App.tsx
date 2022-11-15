@@ -1,19 +1,31 @@
 import { Box, LinearProgress, ThemeProvider, Typography } from "@mui/material";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import useNotifier from "./hooks/useNotifier";
 import useOpencv from "./hooks/useOpencv";
 import useTheme from "./lib/theme";
 import Capture from "./pages/Capture";
 import Home from "./pages/Home";
+import { RootState } from "./redux/reducers";
+import { getGibbetList } from "./redux/reducers/gibbet";
 import "./styles/App.css";
 
 export const OpenCv = React.createContext<any>(null);
 
 function App() {
   useNotifier();
+  const dispatch = useDispatch();
+  const { gibbets } = useSelector((state: RootState) => state.gibbets);
   const { theme } = useTheme();
   const { cv } = useOpencv();
+
+  React.useEffect(() => {
+    if (gibbets.length === 0) {
+      dispatch(getGibbetList());
+    }
+  }, [dispatch, gibbets]);
+
   return (
     <ThemeProvider theme={theme}>
       <OpenCv.Provider value={cv}>

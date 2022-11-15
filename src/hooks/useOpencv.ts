@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 
 const moduleConfig: any = {
   wasmBinaryFile: "opencv_js.wasm",
@@ -8,7 +8,7 @@ const moduleConfig: any = {
 const useOpencv = () => {
   const [cv, setCv] = useState<any>();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (window.Module || cv) {
       return;
     }

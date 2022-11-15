@@ -1,5 +1,3 @@
-import { User } from "../type";
-
 export enum UserActionTypes {
   FIND_USER_REQUEST = "FIND_USER_REQUEST",
   SET_USER = "SET_USER",
