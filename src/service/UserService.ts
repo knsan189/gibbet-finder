@@ -8,70 +8,18 @@ import * as cheerio from "cheerio";
 //profile-character-list__char
 //profile-equipment__slot
 
-export interface Equipment {
-  grade: number;
-  img: string;
-  key: string;
-  name?: string;
-  quality?: number;
-  trypod?: string[];
-  abilityList?: string[];
-}
-
-export interface Equipments {
-  [slot: string]: Equipment;
-}
-
-export interface CardSet {
-  title: string;
-  effect: string;
-}
-
-export interface LoaCard {
-  name: string;
-  img: string;
-  grade: number;
-  awaken: number;
-}
-
-export interface Jewel {
-  name: string;
-  img: string;
-  level: string;
-  grade: string;
-  skill: string;
-}
-
-export interface Char {
-  thumbnail?: string;
-  charName?: string;
-  charLevel?: string;
-  charClass?: string;
-}
-
-export interface Tripod {
-  name: string;
-  level: string;
-  efffect: string;
-}
-
-export interface Skill {
-  name: string;
-  tripods: Tripod[];
-}
-
-export interface Server {
-  serverName: string;
-  charList: Char[];
-}
-
 const tagRegex = /<[^>]*>?/g;
 
 class UserService {
-  public static async getChar(nickname: string) {
+  public static async getChar(nickname: string): Promise<User | null> {
     return new Promise((resolve, reject) => {
       (async () => {
         try {
+          if (nickname === "") {
+            resolve(null);
+            return;
+          }
+
           const { ipcRenderer } = window.require("electron");
           const request: AxiosRequestConfig = {
             url: `https://lostark.game.onstove.com/Profile/Character/${encodeURI(nickname)}`,
@@ -83,7 +31,8 @@ class UserService {
           const charClass = $(".profile-character-info__img").attr("alt") as string;
 
           if (!charClass) {
-            throw new Error("존재하지 않는 유저입니다.");
+            resolve(null);
+            return;
           }
 
           const itemLevel = $(".level-info2__expedition")
@@ -120,7 +69,7 @@ class UserService {
             allCharList.push(temp);
           });
 
-          const charImg = $(".profile-equipment__character img").attr("src");
+          const charImg = $(".profile-equipment__character img").attr("src") || "";
 
           const engrave = $(".profile-ability-engrave");
           const engraves: string[] = [];
@@ -286,8 +235,8 @@ class UserService {
                 // 어빌리티 스톤
                 if (index === 12) {
                   const stone = temp.Element_005?.value;
-                  if (stone) {
-                    const ability: string = stone.Element_001.replace(tagRegex, "");
+                  if (stone && typeof stone.Element_001 === "string") {
+                    const ability: string = stone.Element_001?.replace(tagRegex, "");
                     const abilityList: string[] = [];
                     ability.split("[").forEach((item) => {
                       if (item.length) {

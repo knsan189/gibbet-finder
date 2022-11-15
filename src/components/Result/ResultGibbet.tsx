@@ -1,11 +1,10 @@
-import { Button, CardHeader, CircularProgress, Paper, styled, Typography } from "@mui/material";
+import { CardHeader, CircularProgress, Paper, styled, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Gibbet } from "../../@types/redux/gitbbet.interface";
-import { User } from "../../@types/type";
 import { RootState } from "../../redux/reducers";
-import { GIBBIT_LIST_URL } from "../../utils/const";
+// import { GIBBIT_LIST_URL } from "../../utils/const";
 
 interface Props {
   user?: User;
@@ -23,9 +22,9 @@ const ResultGibbet = ({ user }: Props) => {
   const [result, setResult] = useState<Gibbet>();
   const [loading, setLoading] = useState(false);
 
-  const handleClick = () => {
-    window.require("electron").shell.openExternal(GIBBIT_LIST_URL);
-  };
+  // const handleClick = () => {
+  //   window.require("electron").shell.openExternal(GIBBIT_LIST_URL);
+  // };
 
   const findGibbet = useCallback(async () => {
     if (!user) return;
@@ -33,7 +32,7 @@ const ResultGibbet = ({ user }: Props) => {
 
     const data = await new Promise<Gibbet | undefined>((resolve) => {
       user.allCharList.forEach(({ serverName, charList }) => {
-        charList.forEach((char) => {
+        charList.forEach((char: Char) => {
           for (let i = 0; i < gibbets.length; i++) {
             if (char.charName && gibbets[i].charList.includes(char.charName)) {
               resolve(gibbets[i]);
@@ -80,11 +79,6 @@ const ResultGibbet = ({ user }: Props) => {
           <Typography variant="body2">{result?.reason}</Typography>
         </Box>
       )}
-      {/* <Box position="absolute" sx={{ bottom: 10, left: 10 }}>
-        <Button variant="outlined" onClick={handleClick} size="small">
-          챈에서 효수 목록 확인
-        </Button>
-      </Box> */}
     </StyledPaper>
   );
 };
