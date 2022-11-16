@@ -17,6 +17,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   alignItems: "center",
   padding: `0px ${theme.spacing(1)}`,
   flex: 1,
+  minHeight: 40,
 }));
 
 const ResultGibbet = ({ user }: Props) => {
@@ -31,7 +32,6 @@ const ResultGibbet = ({ user }: Props) => {
   const findGibbet = useCallback(async () => {
     if (!user) return;
     setLoading(true);
-
     const data = await new Promise<Gibbet | undefined>((resolve) => {
       user.allCharList.forEach(({ serverName, charList }) => {
         charList.forEach((char: Char) => {
@@ -44,7 +44,6 @@ const ResultGibbet = ({ user }: Props) => {
       });
       resolve(undefined);
     });
-
     setResult(data);
     setLoading(false);
   }, [user, gibbets]);

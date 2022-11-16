@@ -8,7 +8,6 @@ import useTheme from "./lib/theme";
 import Capture from "./pages/Capture";
 import Home from "./pages/Home";
 import { RootState } from "./redux/reducers";
-import { getGibbetList } from "./redux/reducers/gibbet";
 import "./styles/App.css";
 
 export const OpenCv = React.createContext<any>(null);
@@ -29,26 +28,21 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <OpenCv.Provider value={cv}>
-        <Box>
-          {cv ? (
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/capture" element={<Capture />} />
-            </Routes>
-          ) : (
-            <Box
-              sx={{ height: "100vh" }}
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <Box width={500}>
-                <Typography variant="subtitle2">OpenCv 로딩중..</Typography>
-                <LinearProgress sx={{ borderRadius: 2 }} />
-              </Box>
+        {cv ? (
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/capture" element={<Capture />} />
+          </Routes>
+        ) : (
+          <Box sx={{ height: "100vh" }} display="flex" justifyContent="center" alignItems="center">
+            <Box width={500}>
+              <Typography variant="subtitle2" gutterBottom>
+                라이브러리 로딩중..
+              </Typography>
+              <LinearProgress sx={{ borderRadius: 2 }} />
             </Box>
-          )}
-        </Box>
+          </Box>
+        )}
       </OpenCv.Provider>
     </ThemeProvider>
   );

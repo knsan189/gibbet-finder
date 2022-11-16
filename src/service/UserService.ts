@@ -10,6 +10,8 @@ import * as cheerio from "cheerio";
 
 const tagRegex = /<[^>]*>?/g;
 
+const userMap = new Map<string, User>();
+
 class UserService {
   public static async getChar(nickname: string): Promise<User | null> {
     return new Promise((resolve, reject) => {
@@ -17,6 +19,11 @@ class UserService {
         try {
           if (nickname === "") {
             resolve(null);
+            return;
+          }
+
+          if (userMap.has(nickname)) {
+            resolve(userMap.get(nickname) as User);
             return;
           }
 
@@ -201,7 +208,7 @@ class UserService {
                 const jewelLevel = jewelData.Element_001.value.slotData.rtString;
                 const jewelSkill = GemSkillEffect.find(
                   ({ EquipGemSlotIndex }: any) => EquipGemSlotIndex === index,
-                ).SkillDesc.replace(tagRegex, "");
+                )?.SkillDesc.replace(tagRegex, "");
                 const jewelGrade = jewelData.Element_001.value.slotData.iconGrade;
                 jewels.push({
                   name: jewelName,
@@ -256,7 +263,7 @@ class UserService {
             });
           }
 
-          resolve({
+          const user = {
             charImg,
             charClass,
             itemLevel: parseFloat(itemLevel),
@@ -273,10 +280,16 @@ class UserService {
             wisdom,
             equipments,
             skills,
-          });
+          };
+
+          if (userMap.size > 100) {
+            userMap.clear();
+          }
+          userMap.set(user.charName, user);
+
+          resolve(user);
         } catch (err) {
           reject(err);
-          console.log(err);
         }
       })();
     });

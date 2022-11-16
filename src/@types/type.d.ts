@@ -79,3 +79,8 @@ interface Server {
   serverName: string;
   charList: Char[];
 }
+
+interface CaptureWord {
+  text: string;
+  confidence: number;
+}

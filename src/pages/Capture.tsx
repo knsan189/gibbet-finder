@@ -1,12 +1,29 @@
-import { Box, Button, Divider, Grid, Paper, styled, Typography } from "@mui/material";
-import { Screenshot, Translate } from "@mui/icons-material";
-import { createWorker } from "tesseract.js";
+import {
+  AppBar,
+  Box,
+  Button,
+  Collapse,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  Grid,
+  Paper,
+  Radio,
+  RadioGroup,
+  styled,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import { ClearAll, ScreenshotMonitor, Translate } from "@mui/icons-material";
 import React, { useEffect, useRef, useState, useContext } from "react";
+import { Line } from "tesseract.js";
+import { LoadingButton } from "@mui/lab";
+import { useDispatch } from "react-redux";
 import { screenCapture } from "../lib/capture";
 import { OpenCv } from "../App";
-import UserService from "../service/UserService";
-import CaptureName from "../components/Capture/CaptureName";
 import { getOCRString } from "../utils/ocr";
+import { enqueueSnackbar } from "../redux/reducers/snackbar";
+import CaptureResult from "../components/Capture/CaptureResult";
 
 const HiddenVideo = styled("video")(() => ({
   position: "absolute",
@@ -23,36 +40,42 @@ const setCanvasImage = (canvas: HTMLCanvasElement, url: string, x?: number, y?: 
   img.src = url;
   img.onload = () => {
     const { width, height } = img;
-    const { devicePixelRatio } = window;
     canvas.width = x || width;
     canvas.height = y || height;
-    ctx.scale(devicePixelRatio, devicePixelRatio);
-    // ctx.save();
+    ctx.save();
     ctx.drawImage(img, 0, 0, x || width, y || height);
     ctx.restore();
   };
 };
 
 const Capture = () => {
+  const dispatch = useDispatch();
   const cv = useContext(OpenCv);
+  const [raidType, setRaidType] = useState<string>("4");
   const [status, setStatus] = useState({
     screenShot: false,
     target: false,
     result: false,
   });
-  const [nicknames, setNicknames] = useState<string[]>([]);
+  const [words, setWords] = useState<CaptureWord[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
   const tempRef = useRef<HTMLCanvasElement>(null);
   const srcRef = useRef<HTMLCanvasElement>(null);
   const dstRef = useRef<HTMLCanvasElement>(null);
 
+  const handleChangeRaid = (event: any, value: string) => {
+    setRaidType(value);
+  };
+
   const handleClick = async () => {
-    if (videoRef.current) {
-      screenCapture(videoRef.current, (base64: string) => {
-        const src = srcRef.current;
-        if (src) setCanvasImage(src, base64);
+    if (videoRef.current && srcRef.current) {
+      try {
+        const imageData = await screenCapture(videoRef.current);
+        setCanvasImage(srcRef.current, imageData);
         setStatus((prev) => ({ ...prev, screenShot: true }));
-      });
+      } catch (error: any) {
+        dispatch(enqueueSnackbar({ message: error.message, options: { variant: "error" } }));
+      }
     }
   };
 
@@ -61,28 +84,40 @@ const Capture = () => {
     const ctx = dst?.getContext("2d");
     if (!dst || !ctx) return;
     const base64 = dst.toDataURL("image/png");
-    const kor = await getOCRString(base64, "kor");
-    const korPromiseArray: Promise<User | null>[] = kor.map((name) => UserService.getChar(name));
-    const korResponses = await Promise.all(korPromiseArray);
-    console.log(kor);
-    console.log(korResponses);
+    const korLines: Line[] = await getOCRString(base64, "kor");
+    const korWords: CaptureWord[] = [];
 
-    const indexArr: number[] = [];
-    korResponses.forEach((res, index) => {
-      if (res === null) {
-        indexArr.push(index);
-      }
+    korLines.forEach((line) => {
+      let totalConfidence = 0;
+      line.words.forEach((word) => {
+        totalConfidence += word.confidence;
+      });
+      korWords.push({
+        text: line.text.replaceAll(" ", "").replace("\n", ""),
+        confidence: totalConfidence / line.words.length,
+      });
     });
 
-    // if (indexArr.length > 0) {
-    //   const eng = await getOCRString(base64);
-    //   const engPromiseArray: Promise<User | null>[] = eng.map((name) => UserService.getChar(name));
-    //   const engResponses = await Promise.all(engPromiseArray);
-    //   console.log(eng);
-    //   console.log(engResponses);
-    // }
+    const engLines: Line[] = await getOCRString(base64);
+    const engWords: CaptureWord[] = [];
 
-    // setUsers(responses);
+    engLines.forEach((line) => {
+      let totalConfidence = 0;
+      line.words.forEach((word) => {
+        totalConfidence += word.confidence;
+      });
+      engWords.push({
+        text: line.text.replaceAll(" ", "").replace("\n", ""),
+        confidence: totalConfidence / line.words.length,
+      });
+    });
+
+    const newWords = korWords.map((word, index) =>
+      word.confidence >= engWords[index].confidence ? word : engWords[index],
+    );
+
+    setWords(newWords);
+    setStatus((prev) => ({ ...prev, result: true }));
   };
 
   useEffect(() => {
@@ -97,7 +132,6 @@ const Capture = () => {
 
   const handleCv = async () => {
     if (!cv) return;
-
     await new Promise((resolve) => {
       const src = cv.imread(srcRef.current);
       const temp = cv.imread(tempRef.current);
@@ -113,15 +147,13 @@ const Capture = () => {
         temp.rows + 80,
       );
       dst = src.roi(rect);
-      const test = new cv.Mat();
-      cv.bitwise_not(dst, test);
-      cv.cvtColor(test, test, cv.COLOR_BGR2GRAY);
-      cv.convertScaleAbs(test, test, 1.2, 0);
-      cv.imshow(dstRef.current, test);
+      cv.bitwise_not(dst, dst);
+      cv.cvtColor(dst, dst, cv.COLOR_BGR2GRAY);
+      cv.convertScaleAbs(dst, dst, 1.3, 0);
+      cv.imshow(dstRef.current, dst);
       src.delete();
       dst.delete();
       mask.delete();
-      test.delete();
       resolve("ok");
     });
     setStatus((prev) => ({ ...prev, target: true }));
@@ -129,72 +161,144 @@ const Capture = () => {
   };
 
   return (
-    <Box>
-      <Box p={2}>
-        <Button onClick={handleClick} variant="outlined" sx={{ mr: 1 }} startIcon={<Screenshot />}>
-          스크린샷 찍기
-        </Button>
-        <Button
-          onClick={handleCv}
-          variant="contained"
-          startIcon={<Translate />}
-          disabled={!status.screenShot}
-        >
-          글자 추출
-        </Button>
-      </Box>
+    <>
+      <AppBar position="sticky" color="inherit" elevation={1}>
+        <Toolbar>
+          <Box display="flex" alignItems="center">
+            <Button
+              onClick={handleClick}
+              variant="outlined"
+              sx={{ mr: 1 }}
+              startIcon={<ScreenshotMonitor />}
+              size="small"
+            >
+              게임화면 캡쳐
+            </Button>
+            <LoadingButton
+              onClick={handleCv}
+              variant="contained"
+              startIcon={<Translate />}
+              disabled={!status.screenShot}
+              sx={{ mr: 2 }}
+              loading={status.target && !status.result}
+              size="small"
+            >
+              글자 추출
+            </LoadingButton>
+            <FormControl disabled={status.target}>
+              <RadioGroup row value={raidType} onChange={handleChangeRaid}>
+                <FormControlLabel
+                  control={<Radio size="small" />}
+                  value="4"
+                  label="4인 레이드"
+                  componentsProps={{ typography: { variant: "body2" } }}
+                />
+                <FormControlLabel
+                  control={<Radio size="small" />}
+                  label="8인 레이드"
+                  value="8"
+                  componentsProps={{ typography: { variant: "body2" } }}
+                />
+              </RadioGroup>
+            </FormControl>
+          </Box>
+          <Button
+            color="error"
+            onClick={handleCv}
+            startIcon={<ClearAll />}
+            disabled={!status.screenShot}
+            size="small"
+          >
+            전체 초기화
+          </Button>
+        </Toolbar>
+      </AppBar>
+      <Divider />
       <Box
         p={2}
         sx={{
           background: (theme) =>
             theme.palette.mode === "light" ? "#eee" : theme.palette.grey[900],
+          minHeight: "100vh",
         }}
       >
         <Grid container spacing={2}>
+          <Grid item sm={12}>
+            <Typography variant="h6">1번 파티</Typography>
+          </Grid>
           <Grid item sm={3}>
-            <Paper>
-              <Box p={2}>
-                <Typography variant="h6">1번 파티 이미지</Typography>
-              </Box>
-              <Divider />
-              <Box p={2}>
-                <canvas ref={dstRef} style={{ width: "100%" }} />
-              </Box>
-            </Paper>
+            <Collapse in={status.target}>
+              <Paper>
+                <Box p={2}>
+                  <canvas ref={dstRef} style={{ width: "100%" }} />
+                </Box>
+              </Paper>
+            </Collapse>
           </Grid>
           <Grid item sm={9}>
-            <Paper>
-              <Box p={2}>
-                <Typography variant="h6">1번 파티 결과</Typography>
-              </Box>
-              <Divider />
-              <Box p={2}>
-                {/* {users.map((user, index) =>
-                  index > 3 ? null : <CaptureName key={index} user={user} />,
-                )} */}
-              </Box>
-            </Paper>
+            <Collapse in={status.result}>
+              <Paper>
+                <Box p={2}>
+                  {words.map((word, index) => (
+                    <CaptureResult
+                      key={word.text}
+                      word={word}
+                      index={index}
+                      lastIndex={words.length === index + 1}
+                    />
+                  ))}
+                </Box>
+              </Paper>
+            </Collapse>
+          </Grid>
+          {raidType === "8" ? (
+            <>
+              <Grid item sm={12}>
+                <Typography variant="h6">2번 파티</Typography>
+              </Grid>
+              <Grid item sm={3}>
+                <Collapse in={status.target}>
+                  <Paper>
+                    <Box p={2}>
+                      <canvas style={{ width: "100%" }} />
+                    </Box>
+                  </Paper>
+                </Collapse>
+              </Grid>
+              <Grid item sm={9}>
+                <Collapse in={status.result}>
+                  <Paper>
+                    <Box p={2}>
+                      {words.map((word, index) => (
+                        <CaptureResult
+                          key={word.text}
+                          word={word}
+                          index={index}
+                          lastIndex={words.length === index + 1}
+                        />
+                      ))}
+                    </Box>
+                  </Paper>
+                </Collapse>
+              </Grid>
+            </>
+          ) : null}
+
+          <Grid item sm={12}>
+            <Typography variant="h6">게임화면 스크린샷</Typography>
           </Grid>
           <Grid item sm={12}>
             <Paper>
-              <Box p={2}>
-                <Typography variant="h6">원본 스크린샷</Typography>
-              </Box>
-              <Divider />
               <Box p={2}>
                 <canvas ref={srcRef} style={{ width: "100%" }} />
               </Box>
             </Paper>
           </Grid>
-          <Box pt={2}>
-            <Typography variant="body2">템플릿</Typography>
-            <canvas ref={tempRef} />
-          </Box>
         </Grid>
       </Box>
-
+      <canvas ref={tempRef} style={{ display: "none" }} />
       <HiddenVideo ref={videoRef} />
-    </Box>
+    </>
   );
 };
 

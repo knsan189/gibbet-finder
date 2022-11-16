@@ -16,6 +16,7 @@ const useOpencv = () => {
     moduleConfig.onRuntimeInitialized = () => {
       setCv(window.Module);
     };
+
     window.Module = moduleConfig;
   }, [cv]);
 
