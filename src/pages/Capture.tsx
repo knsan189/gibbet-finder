@@ -160,6 +160,17 @@ const Capture = () => {
     handleOCR();
   };
 
+  const handleClear = () => {
+    setStatus({ screenShot: false, target: false, result: false });
+    setWords([]);
+    const src = srcRef.current;
+    if (src) {
+      const srcCtx = src.getContext("2d");
+      srcCtx?.clearRect(0, 0, src.width, src.height);
+      srcCtx?.beginPath();
+    }
+  };
+
   return (
     <>
       <AppBar position="sticky" color="inherit" elevation={1}>
@@ -204,7 +215,7 @@ const Capture = () => {
           </Box>
           <Button
             color="error"
-            onClick={handleCv}
+            onClick={handleClear}
             startIcon={<ClearAll />}
             disabled={!status.screenShot}
             size="small"
