@@ -46,6 +46,7 @@ function createWindow() {
 
 ipcMain.handle("request", async (_, axios_request) => {
   console.log("User Search Request");
+  console.log(axios_request);
   const result = await axios(axios_request);
   return { data: result.data, status: result.status };
 });

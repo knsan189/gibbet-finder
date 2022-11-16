@@ -31,19 +31,31 @@ const HiddenVideo = styled("video")(() => ({
   left: -100000,
 }));
 
-const templateUrl = "./images/template.png";
+const templateNormal1PartyUrl = "./images/template_169_1.png";
+const templateNormal2PartyUrl = "./images/template_169_2.png";
+const templateWide1PartyUrl = "./images/template_219_1.png";
+const templateWidel2PartyUrl = "./images/template_219_2.png";
 
-const setCanvasImage = (canvas: HTMLCanvasElement, url: string, x?: number, y?: number) => {
+const setCanvasImage = (canvas: HTMLCanvasElement, url: string, template: boolean = false) => {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   const img = new Image();
   img.src = url;
   img.onload = () => {
     const { width, height } = img;
-    canvas.width = x || width;
-    canvas.height = y || height;
     ctx.save();
-    ctx.drawImage(img, 0, 0, x || width, y || height);
+    if (template) {
+      canvas.width = width;
+      canvas.height = height;
+      ctx.drawImage(img, 0, 0, width, height);
+    } else {
+      canvas.width = 2560;
+      canvas.height = 1440;
+      // ctx.rect(0, 0, 1920, 1080);
+      // ctx.fillStyle = "black";
+      // ctx.fill();
+      ctx.drawImage(img, 0, 0, 2560, 1440);
+    }
     ctx.restore();
   };
 };
@@ -59,7 +71,9 @@ const Capture = () => {
   });
   const [words, setWords] = useState<CaptureWord[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const tempRef = useRef<HTMLCanvasElement>(null);
+  const temp1PartyRef = useRef<HTMLCanvasElement>(null);
+  const temp2PartyRef = useRef<HTMLCanvasElement>(null);
+
   const srcRef = useRef<HTMLCanvasElement>(null);
   const dstRef = useRef<HTMLCanvasElement>(null);
 
@@ -122,11 +136,15 @@ const Capture = () => {
 
   useEffect(() => {
     if (srcRef.current) {
-      setCanvasImage(srcRef.current, "./images/screenshot.jpg", 1920, 1080);
+      setCanvasImage(srcRef.current, "./images/screenshot.jpg");
       setStatus((prev) => ({ ...prev, screenShot: true }));
     }
-    if (tempRef.current) {
-      setCanvasImage(tempRef.current, templateUrl);
+
+    if (temp1PartyRef.current) {
+      setCanvasImage(temp1PartyRef.current, templateNormal1PartyUrl, true);
+    }
+    if (temp2PartyRef.current) {
+      setCanvasImage(temp2PartyRef.current, templateNormal2PartyUrl, true);
     }
   }, []);
 
@@ -134,18 +152,25 @@ const Capture = () => {
     if (!cv) return;
     await new Promise((resolve) => {
       const src = cv.imread(srcRef.current);
-      const temp = cv.imread(tempRef.current);
+      const temp = cv.imread(temp2PartyRef.current);
       let dst = new cv.Mat();
       const mask = new cv.Mat();
       cv.matchTemplate(src, temp, dst, cv.TM_CCOEFF_NORMED, mask);
       const result = cv.minMaxLoc(dst, mask);
       const maxPoint = result.maxLoc;
       const rect = new cv.Rect(
-        maxPoint.x + 50,
+        maxPoint.x + 65,
         maxPoint.y + temp.rows,
-        temp.cols + 100,
-        temp.rows + 80,
+        temp.cols - 60,
+        temp.rows + 130,
       );
+
+      // 원본 이미지에 박스 그리기
+      const color = new cv.Scalar(255, 0, 0, 255);
+      const point = new cv.Point(maxPoint.x + temp.cols, maxPoint.y + temp.rows);
+      cv.rectangle(src, maxPoint, point, color, 2, cv.LINE_8, 0);
+      cv.imshow(srcRef.current, src);
+
       dst = src.roi(rect);
       cv.bitwise_not(dst, dst);
       cv.cvtColor(dst, dst, cv.COLOR_BGR2GRAY);
@@ -170,7 +195,6 @@ const Capture = () => {
       srcCtx?.beginPath();
     }
   };
-
   return (
     <>
       <AppBar position="sticky" color="inherit" elevation={1}>
@@ -299,15 +323,21 @@ const Capture = () => {
             <Typography variant="h6">게임화면 스크린샷</Typography>
           </Grid>
           <Grid item sm={12}>
-            <Paper>
-              <Box p={2}>
-                <canvas ref={srcRef} style={{ width: "100%" }} />
-              </Box>
-            </Paper>
+            <Collapse in={status.screenShot}>
+              <Paper>
+                <Box p={2}>
+                  <canvas ref={srcRef} style={{ width: "100%" }} />
+                </Box>
+              </Paper>
+            </Collapse>
+          </Grid>
+          <Grid item>
+            <canvas ref={temp1PartyRef} style={{ display: "none" }} />
+            <canvas ref={temp2PartyRef} style={{ display: "none" }} />
           </Grid>
         </Grid>
       </Box>
-      <canvas ref={tempRef} style={{ display: "none" }} />
+
       <HiddenVideo ref={videoRef} />
     </>
   );

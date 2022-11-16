@@ -289,6 +289,7 @@ class UserService {
 
           resolve(user);
         } catch (err) {
+          console.log(err);
           reject(err);
         }
       })();

@@ -22,6 +22,7 @@ const CaptureResult = ({ word, index, lastIndex }: Props) => {
       try {
         setStatus("loading");
         const response = await UserService.getChar(name);
+
         if (!response) throw new Error();
         const gibbet = await new Promise<Gibbet | undefined>((resolve) => {
           response.allCharList.forEach(({ serverName, charList }) => {
@@ -43,6 +44,7 @@ const CaptureResult = ({ word, index, lastIndex }: Props) => {
         setUser(response);
         setStatus("ok");
       } catch (error) {
+        console.log(error);
         setUser(undefined);
         setStatus("no");
       }
