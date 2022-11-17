@@ -18,6 +18,12 @@ const useOpencv = () => {
     };
 
     window.Module = moduleConfig;
+    const script = document.createElement("script");
+    script.id = "opencv";
+    script.src = "./opencv.js";
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
   }, [cv]);
 
   return { cv };

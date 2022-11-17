@@ -83,4 +83,16 @@ interface Server {
 interface CaptureWord {
   text: string;
   confidence: number;
+  id: number;
+}
+
+interface Screenshot {
+  createdTime: Date;
+  height: number;
+  width: number;
+  gcd: number;
+  aspectRatio: {
+    width: number;
+    height: number;
+  };
 }

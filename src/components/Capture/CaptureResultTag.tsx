@@ -19,8 +19,40 @@ const StyledBox = styled(Box)(({ theme }) => ({
   userSelect: "none",
 }));
 
+const CaptionBox = styled(Box)(({ theme }) => ({
+  position: "absolute",
+  top: "100%",
+  right: 0,
+  paddingRight: theme.spacing(1),
+}));
+
 const CaptureResultTag = ({ type, user }: Props) => {
   const theme = useTheme();
+  let jewels = "";
+  let engraves = "";
+
+  if (user) {
+    user.engraves?.forEach((eng) => {
+      engraves += eng[eng.length - 1];
+    });
+
+    const temp: { level: string; count: number }[] = [];
+
+    user.jewels?.forEach((jewel) => {
+      const level = jewel.name[0];
+      const targetIndex = temp.findIndex((t) => t.level === level);
+      if (targetIndex > -1) {
+        temp[targetIndex].count += 1;
+      } else {
+        temp.push({ level, count: 1 });
+      }
+    });
+
+    temp.sort((a, b) => Number(b.level) - Number(a.level));
+    temp.forEach((t) => {
+      jewels += ` ${t.level}레벨 ${t.count}개`;
+    });
+  }
 
   if (type === "ok")
     return (
@@ -28,16 +60,31 @@ const CaptureResultTag = ({ type, user }: Props) => {
         sx={{ bgcolor: theme.palette.success.light }}
         display="flex"
         justifyContent="space-between"
+        position="relative"
       >
         <Typography variant="body2">😊 안전한 챈럼입니다.</Typography>
-        <Typography variant="caption">3 / 3 / 3 / 3 / 3 / 1</Typography>
+        <Typography variant="caption">
+          {user?.charClass} / {user?.itemLevel}
+        </Typography>
+        <CaptionBox>
+          <Typography variant="caption" color="text.secondary">
+            각인 : {engraves} / 보석 : {jewels}
+          </Typography>
+        </CaptionBox>
       </StyledBox>
     );
 
   if (type === "gibbet")
     return (
-      <StyledBox sx={{ bgcolor: theme.palette.error.light }}>
+      <StyledBox
+        sx={{ bgcolor: theme.palette.error.light }}
+        display="flex"
+        justifyContent="space-between"
+      >
         <Typography variant="body2">😈 효수 걸린 닉네임입니다.</Typography>
+        <Typography variant="caption">
+          {user?.charClass} / {user?.itemLevel}
+        </Typography>
       </StyledBox>
     );
 

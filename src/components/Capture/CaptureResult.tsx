@@ -39,6 +39,7 @@ const CaptureResult = ({ word, index, lastIndex }: Props) => {
         });
         if (gibbet) {
           setStatus("gibbet");
+          setUser(response);
           return;
         }
         setUser(response);

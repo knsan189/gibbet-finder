@@ -28,11 +28,7 @@ class UserService {
           }
 
           const { ipcRenderer } = window.require("electron");
-          const request: AxiosRequestConfig = {
-            url: `https://lostark.game.onstove.com/Profile/Character/${encodeURI(nickname)}`,
-            method: "get",
-          };
-          const response = await ipcRenderer.invoke("request", request);
+          const response = await ipcRenderer.invoke("userSearch", nickname);
           const parseHtml = response.data.replace("<!DOCTYPE html>", "").replace(/\r?\n|\r/g, "");
           const $ = cheerio.load(parseHtml);
           const charClass = $(".profile-character-info__img").attr("alt") as string;

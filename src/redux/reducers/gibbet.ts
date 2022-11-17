@@ -20,7 +20,7 @@ export const setGibbetList = (gibbets: Gibbet[]): SetGibbetList => ({
 });
 
 const initialState: GibbetState = {
-  gibbets: [{ serverName: "a", islandName: "a", reason: "테스트", charList: ["총잡이마늘"] }],
+  gibbets: [],
   status: "ok",
 };
 

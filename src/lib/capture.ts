@@ -7,7 +7,7 @@ export async function screenCapture(video: HTMLVideoElement): Promise<string> {
         const source = sources.find((source: any) => source.name.includes("LOST ARK"));
 
         if (!source) {
-          throw new Error("로스트아크 안켜져있음 수구");
+          throw new Error("로스트아크 안켜져있는거 다앎 수구");
         }
 
         const stream = await navigator.mediaDevices.getUserMedia({

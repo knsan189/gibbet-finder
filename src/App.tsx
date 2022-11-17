@@ -1,13 +1,16 @@
 import { Box, LinearProgress, ThemeProvider, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
+import { History } from "./@types/redux/user.interface";
 import useNotifier from "./hooks/useNotifier";
 import useOpencv from "./hooks/useOpencv";
 import useTheme from "./lib/theme";
 import Capture from "./pages/Capture";
 import Home from "./pages/Home";
 import { RootState } from "./redux/reducers";
+import { getGibbetList } from "./redux/reducers/gibbet";
+import { setHistories } from "./redux/reducers/user";
 import "./styles/App.css";
 
 export const OpenCv = React.createContext<any>(null);
@@ -19,11 +22,16 @@ function App() {
   const { theme } = useTheme();
   const { cv } = useOpencv();
 
-  // React.useEffect(() => {
-  //   if (gibbets.length === 0) {
-  //     dispatch(getGibbetList());
-  //   }
-  // }, [dispatch, gibbets]);
+  useEffect(() => {
+    if (!gibbets.length) {
+      dispatch(getGibbetList());
+      const localData = localStorage.getItem("history");
+      if (localData) {
+        const histories: History[] = JSON.parse(localData);
+        dispatch(setHistories(histories));
+      }
+    }
+  }, [dispatch, gibbets]);
 
   return (
     <ThemeProvider theme={theme}>

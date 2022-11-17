@@ -45,14 +45,24 @@ function createWindow() {
 }
 
 ipcMain.handle("request", async (_, axios_request) => {
-  console.log("User Search Request");
-  console.log(axios_request);
   const result = await axios(axios_request);
   return { data: result.data, status: result.status };
 });
 
+ipcMain.handle("userSearch", async (_, nickname: string) => {
+  console.log("User Search Request");
+
+  const response = await axios({
+    method: "GET",
+    baseURL: encodeURI(`https://lostark.game.onstove.com/Profile/Character/${nickname}`).replace(
+      "%0A",
+      "",
+    ),
+  });
+  return { data: response.data, status: response.status };
+});
+
 ipcMain.handle("screenshot", async () => {
-  console.log("screenshot requested");
   const sources = await desktopCapturer.getSources({ types: ["window", "screen"] });
   return { sources };
 });
