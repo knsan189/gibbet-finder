@@ -14,7 +14,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { ClearAll, ScreenshotMonitor, Translate } from "@mui/icons-material";
+import { ClearAll, Home, ScreenshotMonitor, Translate } from "@mui/icons-material";
 import React, { useRef, useState, useContext } from "react";
 import { Line } from "tesseract.js";
 import { LoadingButton } from "@mui/lab";
@@ -31,6 +31,7 @@ import {
   templateWide1PartyUrl,
   templateWide2PartyUrl,
 } from "../utils/const";
+import { useNavigate } from "react-router-dom";
 
 const HiddenVideo = styled("video")(() => ({
   position: "absolute",
@@ -189,12 +190,17 @@ const Capture = () => {
     setPartyWords({ party1: [], party2: [] });
     clearCanvas(sourceRef.current, party1ResultRef.current, party2ResultRef.current);
   };
+
+  const navigate = useNavigate();
   return (
     <>
       <AppBar position="sticky" color="inherit" elevation={1}>
         <Divider />
         <Toolbar>
           <Box display="flex" alignItems="center">
+            <Button startIcon={<Home />} sx={{ mr: 2 }} onClick={() => navigate("/")}>
+              메인으로
+            </Button>
             <Button
               onClick={onScreenCapture}
               variant="outlined"
