@@ -1,7 +1,6 @@
 import { Avatar, Box, Chip, Paper, styled, Typography } from "@mui/material";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { User } from "../../@types/type";
 import { findUserRequest } from "../../redux/reducers/user";
 import ResultCard from "./ResultCard";
 

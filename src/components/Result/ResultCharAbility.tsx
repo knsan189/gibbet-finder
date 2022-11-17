@@ -1,6 +1,5 @@
 import { Box, Typography } from "@mui/material";
 import React from "react";
-import { User } from "../../@types/type";
 import ResultCard from "./ResultCard";
 
 interface Props {

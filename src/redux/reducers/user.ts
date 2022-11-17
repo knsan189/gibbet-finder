@@ -8,7 +8,6 @@ import {
   UserActionTypes,
   UserState,
 } from "../../@types/redux/user.interface";
-import { User } from "../../@types/type";
 
 const { FIND_USER_REQUEST, SET_USER, SET_HISTORIES, RESPONSE_ERROR } = UserActionTypes;
 

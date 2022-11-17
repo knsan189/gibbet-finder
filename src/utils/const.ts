@@ -7,7 +7,7 @@ export const CARD_AWAKEN =
   "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/pc/profile/img_profile_awake.png";
 
 export const LOGO_URL =
-  "https://ac2-p2.namu.la/20220510sac2/0da9a0651b893fc712a91af831009257f750e12491523050f229202d05aab362.png";
+  "https:////ac-p2.namu.la/20221101sac/a5966bfda3b54f8ca3ad4ab63f5f8475a13a826eb6d367a9498aeecdec71d027.png";
 
 export const ENGRAVE_ICONS = [
   {
@@ -387,3 +387,8 @@ export const ENGRAVE_ICONS = [
     img: "https://static.loawa.com/seals/004.png",
   },
 ];
+
+export const templateNormal1PartyUrl = "./images/template_169_1.png";
+export const templateNormal2PartyUrl = "./images/template_169_2.png";
+export const templateWide1PartyUrl = "./images/template_219_1.png";
+export const templateWide2PartyUrl = "./images/template_219_2.png";

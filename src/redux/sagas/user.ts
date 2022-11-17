@@ -6,7 +6,6 @@ import {
   UserActionTypes,
   UserState,
 } from "../../@types/redux/user.interface";
-import { User } from "../../@types/type";
 import UserService from "../../service/UserService";
 import { enqueueSnackbar } from "../reducers/snackbar";
 import { setUser } from "../reducers/user";
