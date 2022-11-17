@@ -1,6 +1,5 @@
 import { Box, CardHeader, Chip, Paper, styled, Typography } from "@mui/material";
 import React from "react";
-import { User } from "../../@types/type";
 import { CARD_AWAKEN, CARD_IMG } from "../../utils/const";
 import ResultCard from "./ResultCard";
 

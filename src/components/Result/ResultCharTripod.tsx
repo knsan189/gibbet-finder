@@ -1,6 +1,5 @@
 import { Box, Chip, Typography } from "@mui/material";
 import React from "react";
-import { Skill } from "../../service/UserService";
 import ResultCard from "./ResultCard";
 
 interface Props {

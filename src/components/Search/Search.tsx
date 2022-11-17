@@ -1,10 +1,11 @@
 import React from "react";
-import { Avatar, Box, styled, Typography } from "@mui/material";
+import { Avatar, Box, Button, styled, Typography } from "@mui/material";
 import SearchBar from "./SearchBar";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/reducers";
 import { LOGO_URL } from "../../utils/const";
 import ThemeSwitch from "../ThemeSwitch";
+import { Link } from "react-router-dom";
 
 const Container = styled(Box, { shouldForwardProp: (prop) => prop !== "user" })<{
   user: boolean;
@@ -35,6 +36,9 @@ const Search = () => {
   return (
     <Container user={Boolean(user)}>
       <Box p={4} display="flex" flexDirection="column" alignItems="center">
+        <Link to="/capture">
+          <Button>이미지 캡쳐</Button>
+        </Link>
         <Avatar src={LOGO_URL} sx={{ width: 120, height: 120, mb: 2 }} />
         <Typography variant="h6" color="text.primary" gutterBottom>
           로스트아크 채널 효수검색기

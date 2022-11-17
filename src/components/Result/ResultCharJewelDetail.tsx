@@ -1,6 +1,5 @@
 import { Box, Popover, Typography } from "@mui/material";
 import React from "react";
-import { Jewel } from "../../service/UserService";
 
 interface Props {
   popover: HTMLElement | null;

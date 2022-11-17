@@ -1,6 +1,5 @@
 import { Box, styled, Typography } from "@mui/material";
 import React, { MouseEvent, useState } from "react";
-import { Jewel } from "../../service/UserService";
 import ResultCard from "./ResultCard";
 import ResultCharJewelDetail from "./ResultCharJewelDetail";
 

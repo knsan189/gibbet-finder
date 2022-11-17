@@ -1,6 +1,5 @@
 import { Box, Typography } from "@mui/material";
 import React from "react";
-import { User } from "../../@types/type";
 import ResultCard from "./ResultCard";
 
 interface Props {
@@ -22,7 +21,7 @@ const ResultCharAbility = ({ user }: Props) => {
   });
 
   return (
-    <ResultCard title="특성">
+    <ResultCard title="전투 특성">
       <Box display="flex" flexWrap="wrap">
         {parsedAbility?.map((ab) => (
           <Box key={ab.title} display="flex" width="50%">

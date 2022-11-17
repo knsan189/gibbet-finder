@@ -5,6 +5,7 @@ import {
   CircularProgress,
   Drawer,
   Grid,
+  Paper,
   styled,
   Typography,
 } from "@mui/material";
@@ -55,20 +56,25 @@ const Result = () => {
           <Grid item md={12}>
             <ResultGibbet user={user} />
           </Grid>
-          <Grid container item md={4} direction="column" spacing={2}>
-            <Grid item>
-              <Card>
-                <CardMedia component="img" image={user?.charImg} />
-              </Card>
-            </Grid>
-            <Grid item>
-              <ResultCharAbility user={user} />
+
+          <Grid item md={12}>
+            <Grid container spacing={2}>
+              <Grid item md={4}>
+                <Paper sx={{ overflow: "hidden" }}>
+                  <img src={user?.charImg} alt="charImg" />
+                </Paper>
+              </Grid>
+              <Grid item md={8}>
+                <ResultCharInfo user={user} />
+              </Grid>
             </Grid>
           </Grid>
+
+          <Grid item md={4}>
+            <ResultCharAbility user={user} />
+          </Grid>
+
           <Grid item md={8}>
-            <Box mb={2}>
-              <ResultCharInfo user={user} />
-            </Box>
             <ResultCharEngraves user={user} />
           </Grid>
           <Grid item>

@@ -1,6 +1,5 @@
 import { Box, Chip, Grid, styled, Typography } from "@mui/material";
 import React from "react";
-import { User } from "../../@types/type";
 import ResultCard from "./ResultCard";
 import ResultCharEngrave from "./ResultCharEngrave";
 
@@ -25,7 +24,7 @@ const ResultCharEngraveList = ({ user }: Props) => {
   const { engraves } = user;
 
   return (
-    <ResultCard title="각인">
+    <ResultCard title="각인 효과">
       <Grid container spacing={2}>
         {engraves?.map((engrave) => (
           <Grid item key={engrave} md={4}>

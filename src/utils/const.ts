@@ -7,7 +7,7 @@ export const CARD_AWAKEN =
   "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/pc/profile/img_profile_awake.png";
 
 export const LOGO_URL =
-  "https://ac2-p2.namu.la/20220510sac2/0da9a0651b893fc712a91af831009257f750e12491523050f229202d05aab362.png";
+  "https:////ac-p2.namu.la/20221101sac/a5966bfda3b54f8ca3ad4ab63f5f8475a13a826eb6d367a9498aeecdec71d027.png";
 
 export const ENGRAVE_ICONS = [
   {
@@ -107,7 +107,7 @@ export const ENGRAVE_ICONS = [
     img: "https://ac2-p2.namu.la/20211119s2/f553c1f1b7c592530150b728b666c2ba0cbbbd1434b2060dc8b7f1ada8b840af.png",
   },
   {
-    name: "급소타격",
+    name: "급소 타격",
     img: "https://ac2-p2.namu.la/20211119s2/6214c3396e1a90ce63e4170916c34c0879d308512ed522be0fa949e3a2d45af4.png",
   },
   {
@@ -350,4 +350,45 @@ export const ENGRAVE_ICONS = [
     name: "완벽한 억제",
     img: "https://ac-p2.namu.la/20211119s1/4f0eed58ace8b55deea30d304c32731dffed64a861398796a34680f89bee2e20.png",
   },
+  {
+    name: "만개",
+    img: "https://ac-p2.namu.la/20211119s1/4f0eed58ace8b55deea30d304c32731dffed64a861398796a34680f89bee2e20.png",
+  },
+  {
+    name: "회귀",
+    img: "https://static.loawa.com/seals/097.png",
+  },
+  {
+    name: "만개",
+    img: "https://static.loawa.com/seals/098.png",
+  },
+  {
+    name: "질풍노도",
+    img: "https://static.loawa.com/seals/100.png",
+  },
+  {
+    name: "이슬비",
+    img: "https://static.loawa.com/seals/099.png",
+  },
+  {
+    name: "공격속도 감소",
+    img: "https://static.loawa.com/seals/002.png",
+  },
+  {
+    name: "공격력 감소",
+    img: "https://static.loawa.com/seals/001.png",
+  },
+  {
+    name: "방어력 감소",
+    img: "https://static.loawa.com/seals/003.png",
+  },
+  {
+    name: "이동속도 감소",
+    img: "https://static.loawa.com/seals/004.png",
+  },
 ];
+
+export const templateNormal1PartyUrl = "./images/template_169_1.png";
+export const templateNormal2PartyUrl = "./images/template_169_2.png";
+export const templateWide1PartyUrl = "./images/template_219_1.png";
+export const templateWide2PartyUrl = "./images/template_219_2.png";

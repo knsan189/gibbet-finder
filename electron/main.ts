@@ -1,16 +1,17 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, desktopCapturer } from "electron";
 import * as path from "path";
 import installExtension, { REACT_DEVELOPER_TOOLS } from "electron-devtools-installer";
 import axios from "axios";
 import { ipcMain } from "electron";
 
+let win: BrowserWindow;
+
 function createWindow() {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 1280,
     height: 720,
     resizable: !app.isPackaged,
     webPreferences: {
-      // contextIsolation: false,
       nodeIntegration: true,
       contextIsolation: false,
       preload: path.join(__dirname, "preload.js"),
@@ -45,6 +46,24 @@ function createWindow() {
 ipcMain.handle("request", async (_, axios_request) => {
   const result = await axios(axios_request);
   return { data: result.data, status: result.status };
+});
+
+ipcMain.handle("userSearch", async (_, nickname: string) => {
+  console.log("User Search Request");
+
+  const response = await axios({
+    method: "GET",
+    baseURL: encodeURI(`https://lostark.game.onstove.com/Profile/Character/${nickname}`).replace(
+      "%0A",
+      "",
+    ),
+  });
+  return { data: response.data, status: response.status };
+});
+
+ipcMain.handle("screenshot", async () => {
+  const sources = await desktopCapturer.getSources({ types: ["window", "screen"] });
+  return { sources };
 });
 
 app.whenReady().then(() => {
